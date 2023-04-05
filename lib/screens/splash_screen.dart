@@ -34,8 +34,8 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // Navigate to the home screen after 1.5 seconds
-    Timer(const Duration(milliseconds: 3000),
-        () => Navigator.pushReplacementNamed(context, '/home'));
+    // Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/home'));
+    Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/login'));
   }
 
   @override
