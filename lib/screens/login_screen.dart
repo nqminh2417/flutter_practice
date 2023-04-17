@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -124,10 +127,14 @@ class _LoginScreenState extends State<LoginScreen>
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            debugPrint(_emailController.text);
-                            debugPrint(_passwordController.text);
-                            // Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomeScreen()));
-                            Navigator.pushReplacementNamed(context, '/home');
+                            FirebaseAuth.instance.signInWithEmailAndPassword(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text.trim());
+                                
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()),
+                            );
                           }
                         },
                         child: const Text('Login'),

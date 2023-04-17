@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -45,17 +48,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyC_ULH9XeeTprFea-2dMWnLtbgjBMTlgTI',
-    appId: '1:756773483879:web:dc2061747cc17182896bc2',
+    appId: '1:756773483879:web:97436fcf0d8c5128896bc2',
     messagingSenderId: '756773483879',
     projectId: 'flutter-practice-f5f1a',
     authDomain: 'flutter-practice-f5f1a.firebaseapp.com',
     storageBucket: 'flutter-practice-f5f1a.appspot.com',
-    measurementId: 'G-WD5FYPXF4C',
+    measurementId: 'G-L0DSWVL0X1',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDIePN0xJ3RmtKuBStRAolLueNmD9hHHxA',
-    appId: '1:756773483879:android:f337c5c88f74fc1f896bc2',
+    appId: '1:756773483879:android:ba727a67f4bbc197896bc2',
     messagingSenderId: '756773483879',
     projectId: 'flutter-practice-f5f1a',
     storageBucket: 'flutter-practice-f5f1a.appspot.com',
@@ -63,17 +66,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBTm-rAABadPJ5VNX0s2muwLe4mqdV3VQk',
-    appId: '1:756773483879:ios:a4cb6127c40f5fe1896bc2',
-    messagingSenderId: '756773483879',
-    projectId: 'flutter-practice-f5f1a',
-    storageBucket: 'flutter-practice-f5f1a.appspot.com',
-    iosClientId: '756773483879-po6s6tpugs89vqk8tldc13kgqcl6pboo.apps.googleusercontent.com',
-    iosBundleId: 'com.example.flutterPractice',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBTm-rAABadPJ5VNX0s2muwLe4mqdV3VQk',
-    appId: '1:756773483879:ios:a4cb6127c40f5fe1896bc2',
+    appId: '1:756773483879:ios:109a2b3d27bcf289896bc2',
     messagingSenderId: '756773483879',
     projectId: 'flutter-practice-f5f1a',
     storageBucket: 'flutter-practice-f5f1a.appspot.com',

@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'home_screen.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,7 +15,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
 
@@ -20,28 +24,47 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     // Initialize the animation controller
-    _controller = AnimationController(
+    _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 3000));
 
     // Define the fade-in animation
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
+    _fadeAnimation =
+        Tween<double>(begin: 0, end: 1).animate(_animationController);
 
     // Define the slide-up animation
-    _slideAnimation = Tween<double>(begin: 0, end: -0.2)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _slideAnimation = Tween<double>(begin: 0, end: -0.2).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
 
     // Start the animation
-    _controller.forward();
+    _animationController.forward();
 
     // Navigate to the home screen after 1.5 seconds
     // Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/home'));
-    Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/login'));
+    // Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/login'));
+    Timer(const Duration(seconds: 2), () => _navigateToLoginScreen());
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
     super.dispose();
+  }
+
+  void _navigateToLoginScreen() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+
+    if (user != null) {
+      // User is already authenticated
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      // User is not authenticated
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 
   @override
