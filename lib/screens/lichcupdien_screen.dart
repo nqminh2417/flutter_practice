@@ -1,5 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_practice/services/api_service.dart';
+import 'package:flutter_practice/widgets/custom_drawer.dart';
 
 class LichCupDienScreen extends StatefulWidget {
   const LichCupDienScreen({super.key});
@@ -9,18 +11,26 @@ class LichCupDienScreen extends StatefulWidget {
 }
 
 class _LichCupDienScreenState extends State<LichCupDienScreen> {
-
-  final CollectionReference _menu = FirebaseFirestore.instance.collection('side_menu_items');
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lịch cúp điện'),
       ),
+      drawer: const CustomDrawer(),
       body: Center(
-        
-      ),
+        child: FutureBuilder<String>(
+          future: ApiService.getLichCupDien(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Html(data: snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return const CircularProgressIndicator();
+          },
+        ),
+      )
     );
   }
 }
