@@ -1,12 +1,11 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/album.dart';
 import '../services/api_service.dart';
-import '../widgets/custom_drawer.dart';
+import '../widgets/side_menu.dart';
 
 /// This function fetches a list of albums from a JSON API and returns them as a list of Album objects.
-/// 
+///
 /// Returns:
 ///   A `Future` that resolves to a `List` of `Album` objects.
 // Future<List<Album>> fetchAlbum() async {
@@ -34,7 +33,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-
   // late Future<List<Album>> futureAlbum;
 
   @override
@@ -56,23 +54,23 @@ class _HomeScreenState extends State<HomeScreen>
         //   child: Text('Welcome to the home screen!',
         //       style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
         // ),
-        drawer: const CustomDrawer(),
+        drawer: const SideMenu(),
         body: Center(
-          child: FutureBuilder<List<Album>>(
+            child: FutureBuilder<List<Album>>(
           future: ApiService.getAlbums(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 75,
-                  color: Colors.white,
-                  child: Center(
-                    child: Text(snapshot.data![index].title),
-                  ),
-                );
-              });
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      height: 75,
+                      color: Colors.white,
+                      child: Center(
+                        child: Text(snapshot.data![index].title),
+                      ),
+                    );
+                  });
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }

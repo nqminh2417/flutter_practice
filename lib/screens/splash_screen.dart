@@ -2,11 +2,17 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
 
+import '../models/menu_item.dart';
+import '../providers/menu_provider.dart';
+import '../services/firebase_service.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  
   const SplashScreen({super.key});
 
   @override
@@ -38,6 +44,8 @@ class _SplashScreenState extends State<SplashScreen>
     // Start the animation
     _animationController.forward();
 
+    _fetchMenuItems();
+
     // Navigate to the home screen after 1.5 seconds
     // Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/home'));
     // Timer(const Duration(milliseconds: 2000), () => Navigator.pushReplacementNamed(context, '/login'));
@@ -48,6 +56,15 @@ class _SplashScreenState extends State<SplashScreen>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchMenuItems() async {
+    // Fetch menu items from Firebase
+    List<MenuItem> menuItems = await FirebaseService.fetchMenuItems();
+    // Store the menu items in a shared location
+    // For example, using provider package:
+    // ignore: use_build_context_synchronously
+    Provider.of<MenuProvider>(context, listen: false).setMenuItems(menuItems);
   }
 
   void _navigateToLoginScreen() {

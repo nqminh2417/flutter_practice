@@ -1,8 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:provider/provider.dart';
 import 'package:flutter_practice/utils/constants.dart';
 
 import 'firebase_options.dart';
+import 'providers/menu_provider.dart';
+import 'screens/home_screen.dart';
+import 'screens/lichcupdien_screen.dart';
 import 'screens/splash_screen.dart';
 
 Future<void> main() async {
@@ -10,6 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const MyApp());
 }
 
@@ -19,15 +25,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: Constants.appName,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        // '/home': (context) => const HomeScreen(),
-        // '/login': (context) => const LoginScreen(),
-      },
+    return ChangeNotifierProvider(
+      create: (_) => MenuProvider(), // Create an instance of MenuProvider
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: Constants.appName,
+        initialRoute: '/',
+        routes: {
+          '/': (_) => const SplashScreen(),
+          'home': (_) => const HomeScreen(),
+          'lich_cup_dien': (_) => const LichCupDienScreen(),
+          // ... other routes
+        },
+      ),
     );
   }
 }
