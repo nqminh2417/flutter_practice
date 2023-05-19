@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/menu_provider.dart';
+import '../screens/profile_screen.dart';
+import '../screens/switch_account_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -17,37 +19,72 @@ class SideMenu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                      'https://vcdn1-giaitri.vnecdn.net/2022/09/23/-2181-1663929656.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=apYgDs9tYQiwn7pcDOGbNg'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'User Name',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SwitchAccountScreen()),
+              );
+            },
+            splashColor: Colors.amberAccent,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                        'https://vcdn1-giaitri.vnecdn.net/2022/09/23/-2181-1663929656.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=apYgDs9tYQiwn7pcDOGbNg'),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 16.0),
+                  const Text(
+                    'Minh Nguyen',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Icon(Icons.expand_more),
+                  const Spacer(),
+                  // SizedBox(width: 8.0),
+                  // Icon(Icons.settings),
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {
+                      // Navigate to the ProfileScreen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfileScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           ListView.builder(
             shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             itemCount: menuItems.length,
             itemBuilder: (context, index) {
               final menuItem = menuItems[index];
               final isSelected = menuItem.route == selectedRoute;
               return ListTile(
-                leading: Icon(menuItem.icon),
+                contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                leading: SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: const Color(0xffe7e7e7),
+                    ),
+                    child: Icon(menuItem.icon),
+                  ),
+                ),
                 title: Text(menuItem.title),
                 onTap: () {
                   menuProvider.setSelectedRoute(menuItem.route);
@@ -55,52 +92,15 @@ class SideMenu extends StatelessWidget {
                 },
                 selected: isSelected,
                 tileColor: isSelected ? Colors.grey : null,
+                selectedTileColor: const Color(0xfff0f0f0),
+                selectedColor: const Color(0xffb74093),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0)),
               );
             },
           ),
         ],
       ),
     );
-
-    // return Drawer(
-    //   child: ListView.builder(
-    //     itemCount: menuItems.length,
-    //     itemBuilder: (context, index) {
-    //       final menuItem = menuItems[index];
-
-    //       return ListTile(
-    //         leading: Icon(menuItem.icon),
-    //         title: Text(menuItem.title),
-    //         onTap: () {
-    //           Navigator.of(context).pushNamed(menuItem.route);
-    //         },
-    //       );
-    //     },
-    //   ),
-    // );
-
-    // return Drawer(
-    //   child: ListView(
-    //     children: [
-    //       const DrawerHeader(
-    //         decoration: BoxDecoration(
-    //           color: Colors.blue,
-    //         ),
-    //         child: Text('Drawer Header'),
-    //       ),
-
-    //       ListTile(
-    //         leading: const Icon(Icons.logout),
-    //         title: const Text('Logout'),
-    //         onTap: () {
-    //           FirebaseAuth.instance.signOut();
-    //           Navigator.of(context).pushReplacement(
-    //             MaterialPageRoute(builder: (context) => const LoginScreen()),
-    //           );
-    //         },
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }
