@@ -18,16 +18,18 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   late MenuProvider menuProvider;
+  late ThemeProvider themeProvider;
 
   @override
   void initState() {
     super.initState();
     menuProvider = Provider.of<MenuProvider>(context, listen: false);
+    themeProvider = Provider.of<ThemeProvider>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    themeProvider = Provider.of<ThemeProvider>(context);
     final menuItems1 =
         menuProvider.menuItems.sublist(0, menuProvider.menuItems.length - 2);
     final menuItems2 =
@@ -60,7 +62,7 @@ class _SideMenuState extends State<SideMenu> {
                   const Text(
                     'Minh Nguyen',
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -68,8 +70,9 @@ class _SideMenuState extends State<SideMenu> {
                   const Spacer(),
                   IconButton(
                     icon: Icon(themeProvider.isDarkModeOn
-                        ? Icons.light_mode
-                        : Icons.dark_mode),
+                            ? Icons.light_mode // dark
+                            : Icons.dark_mode // light
+                        ),
                     onPressed: () {
                       themeProvider.toggleTheme();
                     },
@@ -110,15 +113,23 @@ class _SideMenuState extends State<SideMenu> {
   Widget buildListTile(BuildContext context, MenuItem menuItem) {
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       leading: SizedBox(
         width: 42,
         height: 42,
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
-            color: const Color(0xffe7e7e7),
+            color: themeProvider.isDarkModeOn
+                ? const Color(0xff4f4f4f) // dark
+                : const Color(0xfff5f5f5), // light
           ),
-          child: Icon(menuItem.icon),
+          child: Icon(
+            menuItem.icon,
+            color: themeProvider.isDarkModeOn
+                ? Colors.white // dark
+                : Colors.black, // light
+          ),
         ),
       ),
       title: Text(menuItem.title),
@@ -134,8 +145,6 @@ class _SideMenuState extends State<SideMenu> {
           Navigator.popAndPushNamed(context, menuItem.route);
         }
       },
-      splashColor: const Color(0xffb74093),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
     );
   }
 }
