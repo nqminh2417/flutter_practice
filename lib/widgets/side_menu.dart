@@ -1,19 +1,37 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:provider/provider.dart';
 
+import '../models/menu_item.dart';
 import '../providers/menu_provider.dart';
-import '../screens/profile_screen.dart';
+import '../providers/theme_provider.dart';
+import '../screens/login_screen.dart';
 import '../screens/switch_account_screen.dart';
 
-class SideMenu extends StatelessWidget {
+class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
 
   @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+  late MenuProvider menuProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    menuProvider = Provider.of<MenuProvider>(context, listen: false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final menuProvider = Provider.of<MenuProvider>(context);
-    final menuItems = menuProvider.menuItems;
-    final selectedRoute = menuProvider.selectedRoute;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final menuItems1 =
+        menuProvider.menuItems.sublist(0, menuProvider.menuItems.length - 2);
+    final menuItems2 =
+        menuProvider.menuItems.sublist(menuProvider.menuItems.length - 2);
 
     return Drawer(
       child: ListView(
@@ -48,17 +66,12 @@ class SideMenu extends StatelessWidget {
                   ),
                   const Icon(Icons.expand_more),
                   const Spacer(),
-                  // SizedBox(width: 8.0),
-                  // Icon(Icons.settings),
                   IconButton(
-                    icon: const Icon(Icons.settings),
+                    icon: Icon(themeProvider.isDarkModeOn
+                        ? Icons.light_mode
+                        : Icons.dark_mode),
                     onPressed: () {
-                      // Navigate to the ProfileScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfileScreen()),
-                      );
+                      themeProvider.toggleTheme();
                     },
                   ),
                 ],
@@ -68,39 +81,61 @@ class SideMenu extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            itemCount: menuItems.length,
+            itemCount: menuItems1.length,
             itemBuilder: (context, index) {
-              final menuItem = menuItems[index];
-              final isSelected = menuItem.route == selectedRoute;
-              return ListTile(
-                contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                leading: SizedBox(
-                  width: 42,
-                  height: 42,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: const Color(0xffe7e7e7),
-                    ),
-                    child: Icon(menuItem.icon),
-                  ),
-                ),
-                title: Text(menuItem.title),
-                onTap: () {
-                  menuProvider.setSelectedRoute(menuItem.route);
-                  Navigator.pushNamed(context, menuItem.route);
-                },
-                selected: isSelected,
-                tileColor: isSelected ? Colors.grey : null,
-                selectedTileColor: const Color(0xfff0f0f0),
-                selectedColor: const Color(0xffb74093),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)),
-              );
+              final menuItem = menuItems1[index];
+              return buildListTile(context, menuItem);
+            },
+          ),
+          const Divider(
+            color: Colors.green,
+            height: 20,
+            indent: 35,
+            endIndent: 35,
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            itemCount: menuItems2.length,
+            itemBuilder: (context, index) {
+              final menuItem = menuItems2[index];
+              return buildListTile(context, menuItem);
             },
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildListTile(BuildContext context, MenuItem menuItem) {
+    return ListTile(
+      contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      leading: SizedBox(
+        width: 42,
+        height: 42,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: const Color(0xffe7e7e7),
+          ),
+          child: Icon(menuItem.icon),
+        ),
+      ),
+      title: Text(menuItem.title),
+      onTap: () {
+        if (menuItem.route == "logout") {
+          // Handle logout here
+          FirebaseAuth.instance.signOut();
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false,
+          );
+        } else {
+          Navigator.popAndPushNamed(context, menuItem.route);
+        }
+      },
+      splashColor: const Color(0xffb74093),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
     );
   }
 }

@@ -6,8 +6,12 @@ import 'package:flutter_practice/utils/constants.dart';
 
 import 'firebase_options.dart';
 import 'providers/menu_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/lichcupdien_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 
 Future<void> main() async {
@@ -16,7 +20,17 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<MenuProvider>(
+        create: (_) => MenuProvider(),
+      ),
+      ChangeNotifierProvider<ThemeProvider>(
+        create: (_) => ThemeProvider(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,19 +39,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => MenuProvider(), // Create an instance of MenuProvider
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: Constants.appName,
-        initialRoute: '/',
-        routes: {
-          '/': (_) => const SplashScreen(),
-          'home': (_) => const HomeScreen(),
-          'lich_cup_dien': (_) => const LichCupDienScreen(),
-          // ... other routes
-        },
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: Constants.appName,
+      theme: Provider.of<ThemeProvider>(context).isDarkModeOn
+          ? ThemeData.dark()
+          : ThemeData.light(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        'home': (context) => const HomeScreen(),
+        'lich_cup_dien': (context) => const LichCupDienScreen(),
+        'login': (context) => const LoginScreen(),
+        'profile': (context) => const ProfileScreen(),
+        'settings': (context) => const SettingsScreen(),
+        // ... other routes
+      },
     );
   }
 }

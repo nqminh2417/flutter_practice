@@ -63,6 +63,12 @@ class FirebaseService {
         return Icons.home;
       case 'calendar_month':
         return Icons.calendar_month;
+      case 'settings':
+        return Icons.settings;
+      case 'person':
+        return Icons.person;
+      case 'logout':
+        return Icons.logout;
       // Add more cases for different icons
       default:
         return Icons.help;
