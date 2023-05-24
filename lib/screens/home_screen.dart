@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
-import 'package:provider/provider.dart';
-
-import '../models/album.dart';
-import '../providers/menu_provider.dart';
-import '../services/api_service.dart';
 import '../widgets/side_menu.dart';
+import 'clock_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,12 +10,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late MenuProvider menuProvider;
-
   @override
   void initState() {
     super.initState();
-    menuProvider = Provider.of<MenuProvider>(context, listen: false);
   }
 
   @override
@@ -37,29 +29,19 @@ class _HomeScreenState extends State<HomeScreen> {
         //       style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
         // ),
         drawer: const SideMenu(),
-        body: Center(
-            child: FutureBuilder<List<Album>>(
-          future: ApiService.getAlbums(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      height: 75,
-                      color: Colors.white,
-                      child: Center(
-                        child: Text(snapshot.data![index].title),
-                      ),
-                    );
-                  });
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            }
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
-        )),
+        body: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ClockScreen()),
+                  );
+                },
+                child: const Text("Profile Screen nè")),
+          ],
+        ),
       ),
       onWillPop: () async {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
+import 'package:flutter_practice/screens/clock_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_practice/utils/constants.dart';
 
@@ -39,15 +39,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Access the MenuProvider instance
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      theme: Provider.of<ThemeProvider>(context).isDarkModeOn
-          ? ThemeData.dark()
-          : ThemeData.light(),
+      theme: ThemeData(
+        // Customize the AppBar theme
+        appBarTheme: const AppBarTheme(
+          elevation: 0, // Set elevation to 0 to remove the shadow
+        ),
+        // Set the app's theme mode based on the ThemeProvider's value
+        brightness:
+            themeProvider.isDarkModeOn ? Brightness.dark : Brightness.light,
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
+        'clock': (context) => const ClockScreen(),
         'home': (context) => const HomeScreen(),
         'lich_cup_dien': (context) => const LichCupDienScreen(),
         'login': (context) => const LoginScreen(),

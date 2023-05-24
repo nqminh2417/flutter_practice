@@ -42,6 +42,7 @@ dependencies:
   cloud_firestore: ^4.5.1
   flutter_html: ^2.2.1
   moment_dart: ^0.17.4
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
