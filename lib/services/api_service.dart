@@ -3,6 +3,8 @@ import 'package:flutter_practice/models/album.dart';
 import 'package:http/http.dart' as http;
 import 'package:moment_dart/moment_dart.dart';
 
+import '../models/progress_summertime_saga.dart';
+
 class ApiService {
   static const String apiUrl = 'https://jsonplaceholder.typicode.com';
 
@@ -48,6 +50,19 @@ class ApiService {
       return response.body;
     } else {
       throw Exception('Failed to load');
+    }
+  }
+
+  static Future<ProgressSummertimeSaga> getProgressSummertimeSagaData() async {
+    final response = await http
+        .get(Uri.parse('https://summertimesaga.com/data/progress.json'));
+
+    if (response.statusCode == 200) {
+      ProgressSummertimeSaga data =
+          ProgressSummertimeSaga.fromJson(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load progress data');
     }
   }
 }
