@@ -44,15 +44,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      theme: ThemeData(
-        // Customize the AppBar theme
-        appBarTheme: const AppBarTheme(
-          elevation: 0, // Set elevation to 0 to remove the shadow
-        ),
-        // Set the app's theme mode based on the ThemeProvider's value
-        brightness:
-            themeProvider.isDarkModeOn ? Brightness.dark : Brightness.light,
-      ),
+      theme: themeProvider.getThemeData(),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),

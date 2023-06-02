@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../utils/constants.dart';
+import '../utils/themes.dart';
+
 class ThemeProvider extends ChangeNotifier {
-  bool _isDarkModeOn = false;
+  ThemeOption _selectedTheme = ThemeOption.light;
 
-  bool get isDarkModeOn => _isDarkModeOn;
+  ThemeOption get selectedTheme => _selectedTheme;
 
-  void toggleTheme() {
-    _isDarkModeOn = !_isDarkModeOn;
+  void setTheme(ThemeOption theme) {
+    _selectedTheme = theme;
     notifyListeners();
+  }
+
+  ThemeData getThemeData() {
+    switch (_selectedTheme) {
+      case ThemeOption.light:
+        return AppThemes.lightTheme;
+      case ThemeOption.dark:
+        return AppThemes.darkTheme;
+      case ThemeOption.dimTwitter:
+        return AppThemes.dimTwitterTheme;
+      case ThemeOption.nightTelegram:
+        return AppThemes.nightTelegramTheme;
+    }
   }
 }

@@ -7,6 +7,8 @@ import '../providers/menu_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/login_screen.dart';
 import '../screens/switch_account_screen.dart';
+import '../utils/constants.dart';
+import 'radio_button_right.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
@@ -18,6 +20,7 @@ class SideMenu extends StatefulWidget {
 class _SideMenuState extends State<SideMenu> {
   late MenuProvider menuProvider;
   late ThemeProvider themeProvider;
+  Color drawerColor = Colors.white;
 
   @override
   void initState() {
@@ -67,13 +70,95 @@ class _SideMenuState extends State<SideMenu> {
                   ),
                   const Icon(Icons.expand_more),
                   const Spacer(),
-                  IconButton(
-                    icon: Icon(themeProvider.isDarkModeOn
-                            ? Icons.light_mode // dark
-                            : Icons.dark_mode // light
-                        ),
-                    onPressed: () {
-                      themeProvider.toggleTheme();
+                  GestureDetector(
+                    child: Icon(
+                      themeProvider.selectedTheme == ThemeOption.light
+                          ? Icons.dark_mode
+                          : Icons.light_mode,
+                    ),
+                    onTap: () {
+                      ThemeOption newTheme =
+                          themeProvider.selectedTheme == ThemeOption.light
+                              ? ThemeOption.dark
+                              : ThemeOption.light;
+                      themeProvider.setTheme(newTheme);
+                    },
+                    onLongPress: () {
+                      Navigator.of(context).pop(); // Close the drawer
+                      showModalBottomSheet(
+                        // backgroundColor: Colors.amber,
+                          enableDrag: true,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          )),
+                          context: context,
+                          builder: (context) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.04,
+                                ),
+                                Row(
+                                  children: const [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 3.0, horizontal: 16.0),
+                                      child: Text(
+                                        "Choose theme",
+                                        style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Spacer()
+                                  ],
+                                ),
+                                const Divider(
+                                  color: Colors.blue,
+                                  height: 16,
+                                  thickness: 1,
+                                ),
+                                RadioButtonRight(
+                                  themeOption: ThemeOption.light,
+                                  selectedThemeOption:
+                                      themeProvider.selectedTheme,
+                                  onChanged: (value) {
+                                    themeProvider.setTheme(value!);
+                                  },
+                                ),
+                                RadioButtonRight(
+                                  themeOption: ThemeOption.dark,
+                                  selectedThemeOption:
+                                      themeProvider.selectedTheme,
+                                  onChanged: (value) {
+                                    themeProvider.setTheme(value!);
+                                  },
+                                ),
+                                RadioButtonRight(
+                                  themeOption: ThemeOption.dimTwitter,
+                                  selectedThemeOption:
+                                      themeProvider.selectedTheme,
+                                  onChanged: (value) {
+                                    themeProvider.setTheme(value!);
+                                  },
+                                ),
+                                RadioButtonRight(
+                                  themeOption: ThemeOption.nightTelegram,
+                                  selectedThemeOption:
+                                      themeProvider.selectedTheme,
+                                  onChanged: (value) {
+                                    themeProvider.setTheme(value!);
+                                  },
+                                ),
+                              ],
+                            );
+                          });
                     },
                   ),
                 ],
@@ -113,23 +198,8 @@ class _SideMenuState extends State<SideMenu> {
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      leading: SizedBox(
-        width: 42,
-        height: 42,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            color: themeProvider.isDarkModeOn
-                ? const Color(0xff4f4f4f) // dark
-                : const Color(0xfff5f5f5), // light
-          ),
-          child: Icon(
-            menuItem.icon,
-            color: themeProvider.isDarkModeOn
-                ? Colors.white // dark
-                : Colors.black, // light
-          ),
-        ),
+      leading: Icon(
+        menuItem.icon,
       ),
       title: Text(menuItem.title),
       onTap: () {
