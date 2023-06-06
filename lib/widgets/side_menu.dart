@@ -1,11 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/menu_item.dart';
 import '../providers/menu_provider.dart';
 import '../providers/theme_provider.dart';
-import '../screens/login_screen.dart';
 import '../screens/switch_account_screen.dart';
 import '../utils/constants.dart';
 import 'radio_button_right.dart';
@@ -20,7 +18,6 @@ class SideMenu extends StatefulWidget {
 class _SideMenuState extends State<SideMenu> {
   late MenuProvider menuProvider;
   late ThemeProvider themeProvider;
-  Color drawerColor = Colors.white;
 
   @override
   void initState() {
@@ -31,11 +28,9 @@ class _SideMenuState extends State<SideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = Provider.of<ThemeProvider>(context);
-    final menuItems1 =
-        menuProvider.menuItems.sublist(0, menuProvider.menuItems.length - 2);
-    final menuItems2 =
-        menuProvider.menuItems.sublist(menuProvider.menuItems.length - 2);
+    final menuItems = menuProvider.menuItems;
+    final parentItems = menuItems.where((item) => item.isParent).toList()..sort((a, b) => a.orderId.compareTo(b.orderId));
+    final childItems = menuItems.where((item) => !item.isParent).toList()..sort((a, b) => a.orderId.compareTo(b.orderId));
 
     return Drawer(
       child: ListView(
@@ -86,7 +81,7 @@ class _SideMenuState extends State<SideMenu> {
                     onLongPress: () {
                       Navigator.of(context).pop(); // Close the drawer
                       showModalBottomSheet(
-                        // backgroundColor: Colors.amber,
+                          // backgroundColor: Colors.amber,
                           enableDrag: true,
                           isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
@@ -165,55 +160,59 @@ class _SideMenuState extends State<SideMenu> {
               ),
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            itemCount: menuItems1.length,
-            itemBuilder: (context, index) {
-              final menuItem = menuItems1[index];
-              return buildListTile(context, menuItem);
-            },
-          ),
-          const Divider(
-            color: Colors.green,
-            height: 20,
-            indent: 35,
-            endIndent: 35,
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            itemCount: menuItems2.length,
-            itemBuilder: (context, index) {
-              final menuItem = menuItems2[index];
-              return buildListTile(context, menuItem);
-            },
-          ),
+          _buildParentItems(parentItems, childItems),
         ],
       ),
     );
   }
 
-  Widget buildListTile(BuildContext context, MenuItem menuItem) {
-    return ListTile(
-      contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      leading: Icon(
-        menuItem.icon,
-      ),
-      title: Text(menuItem.title),
-      onTap: () {
-        if (menuItem.route == "logout") {
-          // Handle logout here
-          FirebaseAuth.instance.signOut();
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false,
+  Widget _buildParentItems(
+      List<MenuItem> parentItems, List<MenuItem> childItems) {
+    final expansionPanelItems = parentItems.map<ExpansionPanel>((item) {
+      final children = _buildChildListTiles(item.docId, childItems);
+      return ExpansionPanel(
+        headerBuilder: (context, isExpanded) {
+          return ListTile(
+            title: Text(item.title),
           );
-        } else {
-          Navigator.popAndPushNamed(context, menuItem.route);
-        }
+        },
+        body: Column(children: children),
+        isExpanded: item.isExpanded,
+      );
+    }).toList();
+
+    return ExpansionPanelList(
+      elevation: 0,
+      dividerColor: Colors.transparent,
+      expandedHeaderPadding: EdgeInsets.zero,
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          parentItems[index].isExpanded = !isExpanded;
+        });
       },
+      children: expansionPanelItems,
     );
+  }
+
+  List<Widget> _buildChildListTiles(
+      String parentId, List<MenuItem> childItems) {
+    final children = <Widget>[];
+
+    for (final childItem in childItems) {
+      if (!childItem.isParent && childItem.parentId == parentId) {
+        children.add(
+          ListTile(
+            leading: Icon(childItem.icon),
+            title: Text(childItem.title),
+            onTap: () {
+              // Handle the onTap action
+              Navigator.popAndPushNamed(context, childItem.route);
+            },
+          ),
+        );
+      }
+    }
+
+    return children;
   }
 }

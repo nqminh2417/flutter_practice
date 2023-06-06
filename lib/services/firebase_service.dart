@@ -3,53 +3,117 @@ import 'package:flutter/material.dart';
 
 import '../models/menu_item.dart';
 
-
 class FirebaseService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// The function retrieves a list of document snapshots from a Firestore collection of side menu
   /// items, ordered by their order ID.
-  /// 
+  ///
   /// Returns:
   ///   The function `getMenuItems` returns a `Future` that resolves to a `List` of `DocumentSnapshot`
   /// objects. These `DocumentSnapshot` objects represent the documents retrieved from the Firestore
   /// collection "side_menu_items" and are ordered by the "orderId" field in ascending order.
   static Future<List<DocumentSnapshot>> getMenuItems() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('side_menu_items').orderBy('orderId', descending: false).get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('side_menu_items')
+        .orderBy('orderId', descending: false)
+        .get();
     return querySnapshot.docs;
   }
 
-  static Future<List<MenuItem>> getSideMenuItems() async {
-    QuerySnapshot querySnapshot = await _firestore.collection('side_menu_items').orderBy('orderId', descending: false).get();
-    
-    List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+  // static Future<List<MenuItem>> getSideMenuItems() async {
+  //   QuerySnapshot querySnapshot = await _firestore.collection('side_menu_items').orderBy('orderId', descending: false).get();
 
-    List<MenuItem> menuItems = documentSnapshots.map((doc) {
-      return MenuItem(
-        title: doc['title'],
-        route: doc['route'],
-        icon: doc['icon'],
-      );
-    }).toList();
+  //   List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
 
-    return menuItems;
-  }
+  //   List<MenuItem> menuItems = documentSnapshots.map((doc) {
+  //     return MenuItem(
+  //       group: doc['group'],
+  //       route: doc['route'],
+  //       title: doc['title'],
+  //       icon: doc['icon'],
+  //     );
+  //   }).toList();
+
+  //   return menuItems;
+  // }
 
   static Future<List<MenuItem>> fetchMenuItems() async {
-    QuerySnapshot snapshot = await _firestore.collection('side_menu_items').orderBy('orderId', descending: false).get();
+    QuerySnapshot snapshot = await _firestore
+        .collection('side_menu_items')
+        .orderBy('orderId', descending: false)
+        .get();
+
     List<MenuItem> menuItems = snapshot.docs.map((doc) {
       // Perform mapping here to convert document data to MenuItem objects
       // Extract the necessary fields like title, route, and icon
-      String title = doc['title'];
+      String description = doc['description'];
+      String docId = doc['docId'];
+      bool isParent = doc['isParent'];
+      int orderId = doc['orderId'];
+      String parentId = doc['parentId'];
       String route = doc['route'];
+      String title = doc['title'];
       IconData icon = _mapIconData(doc['icon']);
 
       return MenuItem(
+        description: description,
+        docId: docId,
+        isParent: isParent,
+        orderId: orderId,
+        parentId: parentId,
         title: title,
         route: route,
         icon: icon,
       );
     }).toList();
+
+    // List<MenuItem> reorderedItems = [];
+    // First way
+    // Find the parent items and add them to the reordered list
+    // for (MenuItem item in menuItems) {
+    //   if (item.isParent) {
+    //     reorderedItems.add(item);
+
+    //     // Find the child items with matching parentId and add them to the reordered list
+    //     List<MenuItem> childItems =
+    //         menuItems.where((child) => child.parentId == item.docId).toList();
+    //     childItems.sort((a, b) => a.orderId.compareTo(b.orderId));
+    //     reorderedItems.addAll(childItems);
+    //   }
+    // }
+
+    // Second way
+    // Sort the items by parentId and orderId
+    //     menuItems.sort((a, b) {
+    //       // First, sort by parentId
+    //       int parentComparison = a.parentId.compareTo(b.parentId);
+    //       if (parentComparison != 0) {
+    //         return parentComparison;
+    //       }
+
+    //       // If the parentId is the same, sort by orderId
+    //       return a.orderId.compareTo(b.orderId);
+    //     });
+
+    // // Retrieve the parent items and add them to the reordered list
+    //     for (MenuItem item in menuItems) {
+    //       if (item.isParent) {
+    //         reorderedItems.add(item);
+    //         // Retrieve the child items with the same parentId and add them to the reordered list
+    //         for (MenuItem childItem in menuItems) {
+    //           if (!childItem.isParent && childItem.parentId == item.docId) {
+    //             reorderedItems.add(childItem);
+    //           }
+    //         }
+    //       }
+    //     }
+
+    // Print the reordered items
+    // for (MenuItem item in reorderedItems) {
+    //   print(
+    //       'Title: ${item.title}, ParentId: ${item.parentId}, OrderId: ${item.orderId}');
+    // }
 
     return menuItems;
   }
