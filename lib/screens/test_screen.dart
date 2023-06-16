@@ -11,11 +11,21 @@ class _TestScreenState extends State<TestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Test Screen'),
+      appBar: AppBar(
+        title: const Text(
+          'Test Screen',
+          style: TextStyle(fontFamily: 'Neonsign'),
         ),
-        body: const Center(
-          child: Text("asddddddd"),
-        ));
+      ),
+      body: Center(
+          child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('Login'),
+          ),
+        ],
+      )),
+    );
   }
 }

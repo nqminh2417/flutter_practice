@@ -5,6 +5,7 @@ import '../widgets/side_menu.dart';
 import 'calendar_screen.dart';
 import 'clock_screen.dart';
 import 'summertime_saga_screen.dart';
+import 'youtube_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +16,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> screens = [
+    {
+      'route': const ClockScreen(),
+      'title': 'bluetooth',
+    },
+    {
+      'route': const YoutubeScreen(),
+      'title': 'Youtube',
+    },
     {
       'route': const ClockScreen(),
       'title': 'Đồng hồ',
@@ -44,11 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Home Screen'),
+          title: const Text(
+            'Home Screen',
+          ),
         ),
         drawer: const SideMenu(),
         body: GridView.count(
-          crossAxisCount: 2,
+          crossAxisCount: 3,
           crossAxisSpacing: 10,
           padding: const EdgeInsets.all(20),
           primary: false,

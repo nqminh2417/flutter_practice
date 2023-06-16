@@ -44,6 +44,9 @@ dependencies:
   moment_dart: ^0.17.4
   provider: ^6.0.5
   intl: ^0.18.1
+  youtube_player_flutter: ^8.1.2
+  google_sign_in: ^6.1.4
+  flutter_svg: ^0.23.0+1
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +86,10 @@ flutter:
     - assets/images/
     - assets/svgs/
 
+  fonts:
+    - family: Neonsign
+      fonts:
+        - asset: assets/fonts/Neonsign-Regular.ttf
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

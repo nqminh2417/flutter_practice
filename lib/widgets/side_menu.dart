@@ -33,135 +33,137 @@ class _SideMenuState extends State<SideMenu> {
     final childItems = menuItems.where((item) => !item.isParent).toList()..sort((a, b) => a.orderId.compareTo(b.orderId));
 
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const SwitchAccountScreen()),
-              );
-            },
-            splashColor: Colors.amberAccent,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(
-                        'https://vcdn1-giaitri.vnecdn.net/2022/09/23/-2181-1663929656.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=apYgDs9tYQiwn7pcDOGbNg'),
-                  ),
-                  const SizedBox(width: 16.0),
-                  const Text(
-                    'Minh Nguyen',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+      child: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SwitchAccountScreen()),
+                );
+              },
+              splashColor: Colors.amberAccent,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(
+                          'https://vcdn1-giaitri.vnecdn.net/2022/09/23/-2181-1663929656.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=apYgDs9tYQiwn7pcDOGbNg'),
                     ),
-                  ),
-                  const Icon(Icons.expand_more),
-                  const Spacer(),
-                  GestureDetector(
-                    child: Icon(
-                      themeProvider.selectedTheme == ThemeOption.light
-                          ? Icons.dark_mode
-                          : Icons.light_mode,
+                    const SizedBox(width: 16.0),
+                    const Text(
+                      'Minh Nguyen',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    onTap: () {
-                      ThemeOption newTheme =
-                          themeProvider.selectedTheme == ThemeOption.light
-                              ? ThemeOption.dark
-                              : ThemeOption.light;
-                      themeProvider.setTheme(newTheme);
-                    },
-                    onLongPress: () {
-                      Navigator.of(context).pop(); // Close the drawer
-                      showModalBottomSheet(
-                          // backgroundColor: Colors.amber,
-                          enableDrag: true,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          )),
-                          context: context,
-                          builder: (context) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.04,
-                                ),
-                                Row(
-                                  children: const [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 3.0, horizontal: 16.0),
-                                      child: Text(
-                                        "Choose theme",
-                                        style: TextStyle(
-                                            color: Colors.blue,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                    const Icon(Icons.expand_more),
+                    const Spacer(),
+                    GestureDetector(
+                      child: Icon(
+                        themeProvider.selectedTheme == ThemeOption.light
+                            ? Icons.dark_mode
+                            : Icons.light_mode,
+                      ),
+                      onTap: () {
+                        ThemeOption newTheme =
+                            themeProvider.selectedTheme == ThemeOption.light
+                                ? ThemeOption.dark
+                                : ThemeOption.light;
+                        themeProvider.setTheme(newTheme);
+                      },
+                      onLongPress: () {
+                        Navigator.of(context).pop(); // Close the drawer
+                        showModalBottomSheet(
+                            // backgroundColor: Colors.amber,
+                            enableDrag: true,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            )),
+                            context: context,
+                            builder: (context) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height * 0.04,
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3.0, horizontal: 16.0),
+                                        child: Text(
+                                          "Choose theme",
+                                          style: TextStyle(
+                                              color: Colors.blue,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                    ),
-                                    Spacer()
-                                  ],
-                                ),
-                                const Divider(
-                                  color: Colors.blue,
-                                  height: 16,
-                                  thickness: 1,
-                                ),
-                                RadioButtonRight(
-                                  themeOption: ThemeOption.light,
-                                  selectedThemeOption:
-                                      themeProvider.selectedTheme,
-                                  onChanged: (value) {
-                                    themeProvider.setTheme(value!);
-                                  },
-                                ),
-                                RadioButtonRight(
-                                  themeOption: ThemeOption.dark,
-                                  selectedThemeOption:
-                                      themeProvider.selectedTheme,
-                                  onChanged: (value) {
-                                    themeProvider.setTheme(value!);
-                                  },
-                                ),
-                                RadioButtonRight(
-                                  themeOption: ThemeOption.dimTwitter,
-                                  selectedThemeOption:
-                                      themeProvider.selectedTheme,
-                                  onChanged: (value) {
-                                    themeProvider.setTheme(value!);
-                                  },
-                                ),
-                                RadioButtonRight(
-                                  themeOption: ThemeOption.nightTelegram,
-                                  selectedThemeOption:
-                                      themeProvider.selectedTheme,
-                                  onChanged: (value) {
-                                    themeProvider.setTheme(value!);
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    },
-                  ),
-                ],
+                                      Spacer()
+                                    ],
+                                  ),
+                                  const Divider(
+                                    color: Colors.blue,
+                                    height: 16,
+                                    thickness: 1,
+                                  ),
+                                  RadioButtonRight(
+                                    themeOption: ThemeOption.light,
+                                    selectedThemeOption:
+                                        themeProvider.selectedTheme,
+                                    onChanged: (value) {
+                                      themeProvider.setTheme(value!);
+                                    },
+                                  ),
+                                  RadioButtonRight(
+                                    themeOption: ThemeOption.dark,
+                                    selectedThemeOption:
+                                        themeProvider.selectedTheme,
+                                    onChanged: (value) {
+                                      themeProvider.setTheme(value!);
+                                    },
+                                  ),
+                                  RadioButtonRight(
+                                    themeOption: ThemeOption.dimTwitter,
+                                    selectedThemeOption:
+                                        themeProvider.selectedTheme,
+                                    onChanged: (value) {
+                                      themeProvider.setTheme(value!);
+                                    },
+                                  ),
+                                  RadioButtonRight(
+                                    themeOption: ThemeOption.nightTelegram,
+                                    selectedThemeOption:
+                                        themeProvider.selectedTheme,
+                                    onChanged: (value) {
+                                      themeProvider.setTheme(value!);
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildParentItems(parentItems, childItems),
-        ],
+            _buildParentItems(parentItems, childItems),
+          ],
+        ),
       ),
     );
   }
