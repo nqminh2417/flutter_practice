@@ -99,8 +99,8 @@ class _SideMenuState extends State<SideMenu> {
                                     height:
                                         MediaQuery.of(context).size.height * 0.04,
                                   ),
-                                  Row(
-                                    children: const [
+                                  const Row(
+                                    children: [
                                       Padding(
                                         padding: EdgeInsets.symmetric(
                                             vertical: 3.0, horizontal: 16.0),

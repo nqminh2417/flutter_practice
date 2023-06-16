@@ -14,7 +14,7 @@ class _TestScreenState extends State<TestScreen> {
       appBar: AppBar(
         title: const Text(
           'Test Screen',
-          style: TextStyle(fontFamily: 'Neonsign'),
+          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Neonsign'),
         ),
       ),
       body: Center(
