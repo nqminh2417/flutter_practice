@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/youtube_search.dart';
+
 class YoutubeScreen extends StatefulWidget {
   const YoutubeScreen({super.key});
 
@@ -13,7 +15,21 @@ class _YoutubeScreenState extends State<YoutubeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Youtube Screen'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate:
+                    YoutubeSearch(),
+              );
+            },
+          )
+        ],
       ),
     );
   }
 }
+
+

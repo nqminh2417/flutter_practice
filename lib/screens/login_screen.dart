@@ -52,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextFormField(
+                          
                           controller: _emailController,
                           inputFormatters: [
                             FilteringTextInputFormatter.deny(RegExp(r'\s')),
@@ -71,7 +72,10 @@ class _LoginScreenState extends State<LoginScreen>
                               borderSide: BorderSide.none,
                             ),
                           ),
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
