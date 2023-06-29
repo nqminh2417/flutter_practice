@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_practice/screens/clock_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_practice/utils/constants.dart';
 
 import 'firebase_options.dart';
+import 'providers/data_provider.dart';
 import 'providers/menu_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
@@ -20,8 +22,16 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Hide the StatusBar on app startup
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // transparent status bar
+  ));
+
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider<DataProvider>(
+        create: (_) => DataProvider(),
+      ),
       ChangeNotifierProvider<MenuProvider>(
         create: (_) => MenuProvider(),
       ),

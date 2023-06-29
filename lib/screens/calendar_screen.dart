@@ -51,135 +51,138 @@ class _CalendarScreenState extends State<CalendarScreen> {
               Card(
                 margin: const EdgeInsets.all(16),
                 elevation: 4,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.075,
-                          ),
-                          IconButton(
-                            color: Colors.amber,
-                            onPressed: () {
-                              setState(() {
-                                cal = DateTime(
-                                  cal.year,
-                                  cal.month - 1,
-                                  cal.day,
-                                );
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_back_ios),
-                          ),
-                          Expanded(
-                            child: TextButton(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.075,
+                            ),
+                            IconButton(
+                              color: Colors.amber,
                               onPressed: () {
-                                _showDatePickerDialog();
+                                setState(() {
+                                  cal = DateTime(
+                                    cal.year,
+                                    cal.month - 1,
+                                    cal.day,
+                                  );
+                                });
                               },
-                              child: Text(
-                                DateFormat('MMMM yyyy').format(cal),
-                                style: const TextStyle(
-                                    color: Colors.amber, fontSize: 18),
+                              icon: const Icon(Icons.arrow_back_ios),
+                            ),
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  _showDatePickerDialog();
+                                },
+                                child: Text(
+                                  DateFormat('MMMM yyyy').format(cal),
+                                  style: const TextStyle(
+                                      color: Colors.amber, fontSize: 18),
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            color: Colors.amber,
-                            onPressed: () {
-                              setState(() {
-                                cal = DateTime(
-                                  cal.year,
-                                  cal.month + 1,
-                                  cal.day,
-                                );
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_forward_ios),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.075,
-                          ),
-                        ],
+                            IconButton(
+                              color: Colors.amber,
+                              onPressed: () {
+                                setState(() {
+                                  cal = DateTime(
+                                    cal.year,
+                                    cal.month + 1,
+                                    cal.day,
+                                  );
+                                });
+                              },
+                              icon: const Icon(Icons.arrow_forward_ios),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.075,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: List.generate(
-                        7,
-                        (index) => Expanded(
-                          child: SizedBox(
-                            height: 35,
-                            // color: Colors.white,
-                            child: Center(
-                              child: Text(
-                                dayHeaders[index],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                      Row(
+                        children: List.generate(
+                          7,
+                          (index) => Expanded(
+                            child: SizedBox(
+                              height: 35,
+                              // color: Colors.white,
+                              child: Center(
+                                child: Text(
+                                  dayHeaders[index],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: daysInMonth + firstDayOfWeek,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 7,
-                      ),
-                      itemBuilder: (context, index) {
-                        if (index < firstDayOfWeek) {
-                          return Container();
-                        } else {
-                          final dayOfMonth = index - firstDayOfWeek + 1;
-                          final date = DateTime(
-                            cal.year,
-                            cal.month,
-                            dayOfMonth,
-                          );
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: daysInMonth + firstDayOfWeek,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                        ),
+                        itemBuilder: (context, index) {
+                          if (index < firstDayOfWeek) {
+                            return Container();
+                          } else {
+                            final dayOfMonth = index - firstDayOfWeek + 1;
+                            final date = DateTime(
+                              cal.year,
+                              cal.month,
+                              dayOfMonth,
+                            );
 
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedDate = date;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isSameDate(date, curDate)
-                                    ? Colors.blue
-                                    : (isSameDate(date, selectedDate)
-                                        ? Colors.red
-                                        : null),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    dayOfMonth.toString(),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: isSameDate(date, curDate) ||
-                                              isSameDate(date, selectedDate)
-                                          ? Colors.white
-                                          : null,
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedDate = date;
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isSameDate(date, curDate)
+                                      ? const Color(0xff1975c5)
+                                      : (isSameDate(date, selectedDate)
+                                          ? Colors.red
+                                          : null),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      dayOfMonth.toString(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: isSameDate(date, curDate) ||
+                                                isSameDate(date, selectedDate)
+                                            ? Colors.white
+                                            : null,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(

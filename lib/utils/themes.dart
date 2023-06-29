@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppThemes {
   static final lightTheme = ThemeData.light().copyWith(
-    // Add any additional properties or overrides here
-    appBarTheme: const AppBarTheme(elevation: 0),
-    listTileTheme: const ListTileThemeData(
-        iconColor: Colors.black, textColor: Colors.black),
-    // Other theme properties...
-  );
+      // Add any additional properties or overrides here
+      appBarTheme: const AppBarTheme(elevation: 0),
+      listTileTheme: const ListTileThemeData(
+          iconColor: Colors.black, textColor: Colors.black),
+      // Other theme properties...
+      );
 
   static final darkTheme = ThemeData.dark().copyWith(
     // Add any additional properties or overrides here

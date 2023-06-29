@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_practice/models/youtube_channel.dart';
 
 import '../models/menu_item.dart';
 
 class FirebaseService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final User? _user = FirebaseAuth.instance.currentUser;
 
   static Future<List<MenuItem>> fetchMenuItems() async {
     QuerySnapshot snapshot = await _firestore
@@ -36,53 +39,6 @@ class FirebaseService {
       );
     }).toList();
 
-    // List<MenuItem> reorderedItems = [];
-    // First way
-    // Find the parent items and add them to the reordered list
-    // for (MenuItem item in menuItems) {
-    //   if (item.isParent) {
-    //     reorderedItems.add(item);
-
-    //     // Find the child items with matching parentId and add them to the reordered list
-    //     List<MenuItem> childItems =
-    //         menuItems.where((child) => child.parentId == item.docId).toList();
-    //     childItems.sort((a, b) => a.orderId.compareTo(b.orderId));
-    //     reorderedItems.addAll(childItems);
-    //   }
-    // }
-
-    // Second way
-    // Sort the items by parentId and orderId
-    //     menuItems.sort((a, b) {
-    //       // First, sort by parentId
-    //       int parentComparison = a.parentId.compareTo(b.parentId);
-    //       if (parentComparison != 0) {
-    //         return parentComparison;
-    //       }
-
-    //       // If the parentId is the same, sort by orderId
-    //       return a.orderId.compareTo(b.orderId);
-    //     });
-
-    // // Retrieve the parent items and add them to the reordered list
-    //     for (MenuItem item in menuItems) {
-    //       if (item.isParent) {
-    //         reorderedItems.add(item);
-    //         // Retrieve the child items with the same parentId and add them to the reordered list
-    //         for (MenuItem childItem in menuItems) {
-    //           if (!childItem.isParent && childItem.parentId == item.docId) {
-    //             reorderedItems.add(childItem);
-    //           }
-    //         }
-    //       }
-    //     }
-
-    // Print the reordered items
-    // for (MenuItem item in reorderedItems) {
-    //   print(
-    //       'Title: ${item.title}, ParentId: ${item.parentId}, OrderId: ${item.orderId}');
-    // }
-
     return menuItems;
   }
 
@@ -105,5 +61,51 @@ class FirebaseService {
       default:
         return Icons.help;
     }
+  }
+
+  static Future<List<YoutubeChannel>> getYtBlockedChannels() async {
+    if (_user == null) {
+      return [];
+    }
+
+    String uid = _user!.uid;
+    QuerySnapshot snapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('youtube_channels')
+        .where('isBlocked', isEqualTo: true)
+        .get();
+
+    List<YoutubeChannel> channelList = snapshot.docs.map((doc) {
+      String channelId = doc['channelId'];
+      String title = doc['title'];
+
+      return YoutubeChannel(channelId: channelId, title: title);
+    }).toList();
+
+    return channelList;
+  }
+
+  static Future<List<YoutubeChannel>> getYtSubscribedChannels() async {
+    if (_user == null) {
+      return [];
+    }
+
+    String uid = _user!.uid;
+    QuerySnapshot snapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('youtube_channels')
+        .where('isBlocked', isEqualTo: false)
+        .get();
+
+    List<YoutubeChannel> channelList = snapshot.docs.map((doc) {
+      String channelId = doc['channelId'];
+      String title = doc['title'];
+
+      return YoutubeChannel(channelId: channelId, title: title);
+    }).toList();
+
+    return channelList;
   }
 }

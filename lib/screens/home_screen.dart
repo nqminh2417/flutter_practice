@@ -5,7 +5,7 @@ import '../widgets/side_menu.dart';
 import 'calendar_screen.dart';
 import 'clock_screen.dart';
 import 'summertime_saga_screen.dart';
-import 'youtube_screen.dart';
+import 'youtube/youtube_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

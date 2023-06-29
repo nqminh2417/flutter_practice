@@ -4,16 +4,11 @@ import '../services/youtube_service.dart';
 import '../utils/shared_preferences_service.dart';
 
 class YoutubeSearch extends SearchDelegate {
-  List<String> searchHistory = [];
-  List<String> combinedSuggestions = [];
+  final List<String> searchHistory;
+  final List<String> combinedSuggestions;
 
-  YoutubeSearch() {
-    loadSearchHistory();
-  }
-
-  void loadSearchHistory() async {
-    searchHistory = await SharedPreferencesService.loadSearchHistory();
-  }
+  YoutubeSearch(
+      {required this.searchHistory, required this.combinedSuggestions});
 
   void saveSearchHistory() async {
     await SharedPreferencesService.saveSearchHistory(searchHistory);
@@ -179,9 +174,12 @@ class YoutubeSearch extends SearchDelegate {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  searchHistory.remove(suggestion);
-                                  saveSearchHistory();
-                                  showSuggestions(context);
+                                  if (searchHistory.contains(suggestion)) {
+                                    searchHistory.remove(suggestion);
+                                    saveSearchHistory();
+                                    // Rebuild buildSuggestions with updated suggestions
+                                    showSuggestions(context);
+                                  }
                                   Navigator.pop(context); // Close the dialog
                                 },
                                 child: const Text('Delete'),
