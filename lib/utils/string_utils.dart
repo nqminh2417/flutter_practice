@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'constants.dart';
 
 class StringUtils {
@@ -37,5 +39,18 @@ class StringUtils {
         // Remove "ThemeOption." prefix and return the formatted text
         return formattedText;
     }
+  }
+
+  static String formatNumberToShort(number) {
+    int value = (number is int) ? number : int.tryParse(number) ?? 0;
+    const suffixes = ['K', 'M', 'B', 'T'];
+
+    if (value <= 0) return '0';
+
+    final logValue = log(value) / log(10);
+    final exp = logValue ~/ 3;
+    final shortValue = (value / pow(1000, exp)).toStringAsFixed(2);
+
+    return '$shortValue${suffixes[exp - 1]}';
   }
 }

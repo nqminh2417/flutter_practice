@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/data_provider.dart';
 import '../../services/youtube_service.dart';
+import 'youtube_channel_info.dart';
 
 class YoutubeSubscriptions extends StatefulWidget {
   const YoutubeSubscriptions({super.key});
@@ -47,7 +48,16 @@ class _YoutubeSubscriptionsState extends State<YoutubeSubscriptions> {
                     icon: const Icon(Icons.more_horiz),
                     onPressed: () {},
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const YoutubeChannelInfo(
+                          channelId: "d",
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );
