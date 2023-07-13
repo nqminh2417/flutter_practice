@@ -16,6 +16,10 @@ class QMButton extends StatelessWidget {
   final Color? shadowColor;
   final Color? backgroundColor;
   final Color? foregroundColor;
+  final double leadingIconPaddingLeft;
+  final double leadingIconPaddingRight;
+  final double trailingIconPaddingLeft;
+  final double trailingIconPaddingRight;
 
   /// The [text] parameter must not be null.
   ///
@@ -29,7 +33,7 @@ class QMButton extends StatelessWidget {
     this.width = 120,
     this.height = 40,
     this.iconSize = 24,
-    this.borderRadius = 10,
+    this.borderRadius = 4,
     this.borderWidth = 1,
     this.borderColor,
     this.borderStyle = BorderStyle.none,
@@ -37,6 +41,10 @@ class QMButton extends StatelessWidget {
     this.shadowColor,
     this.backgroundColor,
     this.foregroundColor,
+    this.leadingIconPaddingLeft = 8,
+    this.leadingIconPaddingRight = 0,
+    this.trailingIconPaddingLeft = 0,
+    this.trailingIconPaddingRight = 8,
   });
 
   @override
@@ -63,13 +71,23 @@ class QMButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (leadingIcon != null) ...[
-              Icon(leadingIcon!, size: iconSize),
-              const SizedBox(width: 8),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: leadingIconPaddingLeft,
+                    right: leadingIconPaddingRight),
+                child: Icon(leadingIcon!, size: iconSize),
+              ),
             ],
-            Text(text, style: textStyle), // Set the text style
+            Expanded(
+                child: Center(
+                    child: Text(text, style: textStyle))), // Set the text style
             if (trailingIcon != null) ...[
-              const SizedBox(width: 8),
-              Icon(trailingIcon!, size: iconSize),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: trailingIconPaddingLeft,
+                    right: trailingIconPaddingRight),
+                child: Icon(trailingIcon!, size: iconSize),
+              ),
             ],
           ],
         ),

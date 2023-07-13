@@ -63,7 +63,7 @@ class FirebaseService {
     }
   }
 
-  static Future<List<YoutubeChannel>> getYtBlockedChannels() async {
+  static Future<List<YoutubeChannel>> getYtChannels() async {
     if (_user == null) {
       return [];
     }
@@ -73,39 +73,46 @@ class FirebaseService {
         .collection('users')
         .doc(uid)
         .collection('youtube_channels')
-        .where('isBlocked', isEqualTo: true)
         .get();
 
     List<YoutubeChannel> channelList = snapshot.docs.map((doc) {
       String channelId = doc['channelId'];
       String title = doc['title'];
+      bool isBlocked = doc['isBlocked'];
 
-      return YoutubeChannel(channelId: channelId, title: title);
+      return YoutubeChannel(
+          channelId: channelId, title: title, isBlocked: isBlocked);
     }).toList();
 
     return channelList;
   }
 
-  static Future<List<YoutubeChannel>> getYtSubscribedChannels() async {
-    if (_user == null) {
-      return [];
+  static Future<void> addYtChannel(YoutubeChannel channel) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_user!.uid)
+          .collection('youtube_channels')
+          .add({
+        'channelId': channel.channelId,
+        'title': channel.title,
+        'isBlocked': channel.isBlocked
+      });
+    } catch (e) {
+      // handle exception
     }
+  }
 
-    String uid = _user!.uid;
-    QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('youtube_channels')
-        .where('isBlocked', isEqualTo: false)
-        .get();
-
-    List<YoutubeChannel> channelList = snapshot.docs.map((doc) {
-      String channelId = doc['channelId'];
-      String title = doc['title'];
-
-      return YoutubeChannel(channelId: channelId, title: title);
-    }).toList();
-
-    return channelList;
+  static Future<void> updateChannel(YoutubeChannel channel) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_user!.uid)
+          .collection('youtube_channels')
+          .doc(channel.channelId)
+          .update({'isBlocked': channel.isBlocked});
+    } catch (e) {
+      // Handle exception
+    }
   }
 }

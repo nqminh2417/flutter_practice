@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_practice/screens/youtube/youtube_channel_list.dart';
-import 'package:provider/provider.dart';
 
 import '../../providers/data_provider.dart';
-import '../../services/firebase_service.dart';
 import '../../utils/shared_preferences_service.dart';
 import '../../widgets/youtube_search.dart';
 
@@ -56,15 +54,7 @@ class _YoutubeScreenState extends State<YoutubeScreen>
 
   fetchData() async {
     try {
-      final ytBlockedChannels = await FirebaseService.getYtBlockedChannels();
-      final ytSubscribedChannels = await FirebaseService.getYtSubscribedChannels();
-      setState(() {
-        Provider.of<DataProvider>(context, listen: false)
-            .setYtBlockedChannels(ytBlockedChannels);
-
-        Provider.of<DataProvider>(context, listen: false)
-            .setYtSubscribedChannel(ytSubscribedChannels);
-      });
+      
     } catch (e) {
       // Handle error
     }

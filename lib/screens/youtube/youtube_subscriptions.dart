@@ -14,17 +14,37 @@ class YoutubeSubscriptions extends StatefulWidget {
 
 class _YoutubeSubscriptionsState extends State<YoutubeSubscriptions> {
   late DataProvider dataProvider;
+  bool isDataLoaded = false; // Add a flag to track if the data is loaded
 
   @override
   void initState() {
     super.initState();
     dataProvider = Provider.of<DataProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _initializeChannels(); // Wait for channels to be initialized
+      setState(() {
+        isDataLoaded = true; // Mark data as loaded after initialization
+      });
+    });
+  }
+
+  Future<void> _initializeChannels() async {
+    await dataProvider.initializeChannels();
   }
 
   @override
   Widget build(BuildContext context) {
-    final channelIds =
-        dataProvider.ytSubscribedChannels.map((e) => e.channelId).join(',');
+    if (!isDataLoaded) {
+      // Show loading indicator while data is being fetched
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final channelList = dataProvider.channelList;
+    final channelIds = channelList
+        .where((channel) => !channel.isBlocked)
+        .map((channel) => channel.channelId)
+        .join(',');
+
     return FutureBuilder<List<dynamic>>(
         future: YoutubeService.getListChannels(channelIds),
         builder: (context, snapshot) {
@@ -52,8 +72,8 @@ class _YoutubeSubscriptionsState extends State<YoutubeSubscriptions> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const YoutubeChannelInfo(
-                          channelId: "d",
+                        builder: (context) => YoutubeChannelInfo(
+                          channelId: item['id'],
                         ),
                       ),
                     );

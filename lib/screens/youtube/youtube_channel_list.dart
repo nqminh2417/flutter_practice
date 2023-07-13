@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_practice/screens/youtube/youtube_blocked.dart';
-import 'package:flutter_practice/services/youtube_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/youtube_channel.dart';
@@ -35,25 +34,6 @@ class _YoutubeChannelListState extends State<YoutubeChannelList>
     _tabController.dispose();
     super.dispose();
   }
-
-  // Future<void> fetchData() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   try {
-  //     ytBlockedChannels = await FirebaseService.getYtBlockedChannels();
-  //     ytSubscribedChannels = await FirebaseService.getYtSubscribedChannels();
-  //   } catch (e) {
-  //     // Handle error
-  //   }
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
-
-  // Future<void> _refreshData() async {
-  //   await fetchData();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -122,56 +102,4 @@ class _YoutubeChannelListState extends State<YoutubeChannelList>
       ),
     );
   }
-
-  Widget buildSubscriptions() {
-    // final ytSubscribedChannels = dataProvider.ytSubscribedChannels;
-    final channelIds =
-        dataProvider.ytSubscribedChannels.map((e) => e.channelId).join(',');
-    return FutureBuilder<List<dynamic>>(
-        future: YoutubeService.getListChannels(channelIds),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            final items = snapshot.data!;
-            return ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        item['snippet']['thumbnails']['default']['url']),
-                  ),
-                  title: Text(item['snippet']['title']),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () {},
-                  ),
-                  onTap: () {},
-                );
-              },
-            );
-          } else {
-            return const Center(child: Text('No data available'));
-          }
-        });
-  }
-
-  Widget buildBlocked() {
-    // final ytSubscribedChannels = dataProvider.ytSubscribedChannels;
-    return const Text("ASd");
-  }
-
-  // return ListView.builder(
-  //     itemCount: items.length,
-  //     itemBuilder: (context, index) {
-  //       final item = items[index];
-  //       return ListTile(
-  //         title: Text(item.title),
-  //         trailing: const Icon(Icons.clear),
-  //       );
-  //     });
 }

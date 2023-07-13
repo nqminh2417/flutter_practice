@@ -12,7 +12,7 @@ class YoutubeService {
       'maxResults': '20',
       'part': 'snippet',
       'q': query,
-      'type': 'video,channel,playlist',
+      'type': 'channel',//video,channel,playlist
     });
 
     final response = await http.get(url);

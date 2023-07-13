@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screens/youtube/youtube_channel_info.dart';
 import '../services/youtube_service.dart';
 import '../utils/shared_preferences_service.dart';
 
@@ -59,53 +60,69 @@ class YoutubeSearch extends SearchDelegate {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
-          final results = snapshot.data!;
+          final items = snapshot.data!;
           // Display the search results in your desired widget
           return ListView.builder(
-            itemCount: results.length,
+            itemCount: items.length,
             itemBuilder: (context, index) {
-              final result = results[index];
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          result['snippet']['thumbnails']['medium']['url'],
-                          width: 120,
-                          height: 90,
-                          fit: BoxFit.cover,
+              final item = items[index];
+              return GestureDetector(
+                onTap: () {
+                  final kind = item['id']['kind'];
+                  if (kind == 'youtube#channel') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => YoutubeChannelInfo(
+                          channelId: item['id']['channelId'],
                         ),
                       ),
-                      Expanded(
-                          child: Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(6, 4, 0, 4),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              result['snippet']['title'],
-                              maxLines: 2,
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            Text(result['snippet']['channelTitle']),
-                            Text(result['snippet']['publishTime']),
-                          ],
+                    );
+                  } else if (kind == 'youtube#video') {
+                  } else if (kind == 'youtube#playlist') {}
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            item['snippet']['thumbnails']['medium']['url'],
+                            width: 120,
+                            height: 90,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ))
-                    ],
+                        Expanded(
+                            child: Padding(
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(8, 4, 0, 4),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item['snippet']['title'],
+                                maxLines: 2,
+                                softWrap: false,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Text(item['snippet']['channelTitle']),
+                              Text(item['snippet']['publishTime']),
+                            ],
+                          ),
+                        ))
+                      ],
+                    ),
                   ),
                 ),
               );

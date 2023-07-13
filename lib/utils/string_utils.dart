@@ -49,8 +49,13 @@ class StringUtils {
 
     final logValue = log(value) / log(10);
     final exp = logValue ~/ 3;
-    final shortValue = (value / pow(1000, exp)).toStringAsFixed(2);
+    final shortValue = (value / pow(1000, exp));
 
-    return '$shortValue${suffixes[exp - 1]}';
+    // Check if the shortValue is a whole number
+    if (shortValue % 1 == 0) {
+      return '${shortValue.toInt()}${suffixes[exp - 1]}';
+    } else {
+      return '${shortValue.toStringAsFixed(2)}${suffixes[exp - 1]}';
+    }
   }
 }

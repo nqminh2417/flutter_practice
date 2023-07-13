@@ -18,10 +18,10 @@ class _SummertimeSagaScreenState extends State<SummertimeSagaScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProgressSummertimeSagaData();
+    fetchData();
   }
 
-  Future<void> fetchProgressSummertimeSagaData() async {
+  Future<void> fetchData() async {
     try {
       final data = await ApiService.getProgressSummertimeSagaData();
       setState(() {
