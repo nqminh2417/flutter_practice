@@ -103,16 +103,39 @@ class FirebaseService {
     }
   }
 
-  static Future<void> updateChannel(YoutubeChannel channel) async {
+  static Future<void> updateYtChannel(YoutubeChannel channel) async {
     try {
-      await _firestore
+      final querySnapshot = await _firestore
           .collection('users')
           .doc(_user!.uid)
           .collection('youtube_channels')
-          .doc(channel.channelId)
-          .update({'isBlocked': channel.isBlocked});
+          .where('channelId', isEqualTo: channel.channelId)
+          .get();
+
+      final documentSnapshot = querySnapshot.docs.first;
+      await documentSnapshot.reference.update({'isBlocked': channel.isBlocked});
+      print('Document updated successfully');
     } catch (e) {
       // Handle exception
+      print('Error updating document: $e');
+    }
+  }
+
+  static Future<void> removeYtChannel(YoutubeChannel channel) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(_user!.uid)
+          .collection('youtube_channels')
+          .where('channelId', isEqualTo: channel.channelId)
+          .get();
+
+      final documentSnapshot = querySnapshot.docs.first;
+      await documentSnapshot.reference.delete();
+      print('Document removed successfully');
+    } catch (e) {
+      // Handle exception
+      print('Error removing document: $e');
     }
   }
 }

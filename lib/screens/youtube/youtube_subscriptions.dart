@@ -68,8 +68,8 @@ class _YoutubeSubscriptionsState extends State<YoutubeSubscriptions> {
                     icon: const Icon(Icons.more_horiz),
                     onPressed: () {},
                   ),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => YoutubeChannelInfo(
@@ -77,6 +77,8 @@ class _YoutubeSubscriptionsState extends State<YoutubeSubscriptions> {
                         ),
                       ),
                     );
+                    // Reload the screen by calling setState
+                    setState(() {});
                   },
                 );
               },

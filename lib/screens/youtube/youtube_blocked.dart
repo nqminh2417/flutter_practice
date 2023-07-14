@@ -67,8 +67,8 @@ class _YoutubeBlockedState extends State<YoutubeBlocked> {
                     icon: const Icon(Icons.more_horiz),
                     onPressed: () {},
                   ),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => YoutubeChannelInfo(
@@ -76,6 +76,8 @@ class _YoutubeBlockedState extends State<YoutubeBlocked> {
                         ),
                       ),
                     );
+                    // Reload the screen by calling setState
+                    setState(() {});
                   },
                 );
               },

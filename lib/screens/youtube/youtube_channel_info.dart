@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_practice/services/youtube_service.dart';
+import 'package:flutter_practice/utils/constants.dart';
 import 'package:flutter_practice/utils/string_utils.dart';
 import 'package:flutter_practice/widgets/qm_button.dart';
 import 'package:provider/provider.dart';
@@ -181,14 +182,16 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
                         text: "Subscribe",
                         leadingIcon: Icons.notifications_outlined,
                         onPressed: () {
-                          // Handle button A logic
+                          // Subscribe to a new channel
+                          actionSubscribe();
                         },
                       ),
                       QMButton(
                         text: "Block",
                         trailingIcon: Icons.block_outlined,
                         onPressed: () {
-                          // Handle button B logic
+                          // Block a new channel
+                          actionBlock();
                         },
                       ),
                     ]
@@ -199,36 +202,32 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
                             leadingIcon: Icons.notifications_off_outlined,
                             onPressed: () {
                               // Add a new channel
-                              // final newChannel = YoutubeChannel(
-                              //   channelId: channelId,
-                              //   title: title,
-                              //   isBlocked: false,
-                              // );
-                              // dataProvider.addChannel(newChannel);
+                              actionUnsubscribe();
                             }),
                         QMButton(
                             text: "Block",
                             leadingIcon: Icons.block_outlined,
                             onPressed: () {
-                              // Add a new channel
-                              // final newChannel = YoutubeChannel(
-                              //   channelId: channelId,
-                              //   title: title,
-                              //   isBlocked: true,
-                              // );
-                              // dataProvider.addChannel(newChannel);
+                              // Block a channel
+                              actionBlock();
                             }),
                       ],
                       if (yc.isBlocked) ...[
                         QMButton(
                           text: 'Subscribe',
                           leadingIcon: Icons.notifications_outlined,
-                          onPressed: () {},
+                          onPressed: () {
+                            // Subscribe to a new channel
+                            actionSubscribe();
+                          },
                         ),
                         QMButton(
                           text: 'Unblock',
                           leadingIcon: Icons.priority_high_outlined,
-                          onPressed: () {},
+                          onPressed: () {
+                            // Unblock a channel
+                            actionUnblock();
+                          },
                         )
                       ],
                     ],
@@ -237,5 +236,41 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
         ],
       ),
     );
+  }
+
+  void actionSubscribe() {
+    final newChannel = YoutubeChannel(
+      channelId: widget.channelId,
+      title: title,
+      isBlocked: false,
+    );
+    dataProvider.channelAction(newChannel, YtAction.subscribe);
+  }
+
+  void actionUnsubscribe() {
+    final newChannel = YoutubeChannel(
+      channelId: widget.channelId,
+      title: title,
+      isBlocked: false,
+    );
+    dataProvider.channelAction(newChannel, YtAction.unsubscribe);
+  }
+
+  void actionBlock() {
+    final newChannel = YoutubeChannel(
+      channelId: widget.channelId,
+      title: title,
+      isBlocked: true,
+    );
+    dataProvider.channelAction(newChannel, YtAction.block);
+  }
+
+  void actionUnblock() {
+    final newChannel = YoutubeChannel(
+      channelId: widget.channelId,
+      title: title,
+      isBlocked: false,
+    );
+    dataProvider.channelAction(newChannel, YtAction.unblock);
   }
 }
