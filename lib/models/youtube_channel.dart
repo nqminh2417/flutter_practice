@@ -2,31 +2,27 @@
 import 'dart:convert';
 
 class YoutubeChannel {
-  final String channelId;
-  final String title;
-  final bool isBlocked;
+  String channelId;
+  String title;
+  bool isSubscribed;
+  bool isBlocked;
   YoutubeChannel({
     required this.channelId,
     required this.title,
+    required this.isSubscribed,
     required this.isBlocked,
   });
-
-  factory YoutubeChannel.fromFirestore(Map<String, dynamic> data) {
-    return YoutubeChannel(
-      channelId: data['channelId'],
-      title: data['title'],
-      isBlocked: data['isBlocked'],
-    );
-  }
 
   YoutubeChannel copyWith({
     String? channelId,
     String? title,
+    bool? isSubscribed,
     bool? isBlocked,
   }) {
     return YoutubeChannel(
       channelId: channelId ?? this.channelId,
       title: title ?? this.title,
+      isSubscribed: isSubscribed ?? this.isSubscribed,
       isBlocked: isBlocked ?? this.isBlocked,
     );
   }
@@ -35,6 +31,7 @@ class YoutubeChannel {
     return <String, dynamic>{
       'channelId': channelId,
       'title': title,
+      'isSubscribed': isSubscribed,
       'isBlocked': isBlocked,
     };
   }
@@ -43,6 +40,7 @@ class YoutubeChannel {
     return YoutubeChannel(
       channelId: map['channelId'] as String,
       title: map['title'] as String,
+      isSubscribed: map['isSubscribed'] as bool,
       isBlocked: map['isBlocked'] as bool,
     );
   }
@@ -52,7 +50,9 @@ class YoutubeChannel {
   factory YoutubeChannel.fromJson(String source) => YoutubeChannel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'YoutubeChannel(channelId: $channelId, title: $title, isBlocked: $isBlocked)';
+  String toString() {
+    return 'YoutubeChannel(channelId: $channelId, title: $title, isSubscribed: $isSubscribed, isBlocked: $isBlocked)';
+  }
 
   @override
   bool operator ==(covariant YoutubeChannel other) {
@@ -61,9 +61,15 @@ class YoutubeChannel {
     return 
       other.channelId == channelId &&
       other.title == title &&
+      other.isSubscribed == isSubscribed &&
       other.isBlocked == isBlocked;
   }
 
   @override
-  int get hashCode => channelId.hashCode ^ title.hashCode ^ isBlocked.hashCode;
+  int get hashCode {
+    return channelId.hashCode ^
+      title.hashCode ^
+      isSubscribed.hashCode ^
+      isBlocked.hashCode;
+  }
 }

@@ -78,10 +78,14 @@ class FirebaseService {
     List<YoutubeChannel> channelList = snapshot.docs.map((doc) {
       String channelId = doc['channelId'];
       String title = doc['title'];
+      bool isSubscribed = doc['isSubscribed'];
       bool isBlocked = doc['isBlocked'];
 
       return YoutubeChannel(
-          channelId: channelId, title: title, isBlocked: isBlocked);
+          channelId: channelId,
+          title: title,
+          isSubscribed: isSubscribed,
+          isBlocked: isBlocked);
     }).toList();
 
     return channelList;
@@ -96,10 +100,12 @@ class FirebaseService {
           .add({
         'channelId': channel.channelId,
         'title': channel.title,
-        'isBlocked': channel.isBlocked
+        'isBlocked': channel.isBlocked,
+        'isSubscribed': channel.isSubscribed
       });
     } catch (e) {
       // handle exception
+      throw ('Error adding document: $e');
     }
   }
 
@@ -113,11 +119,13 @@ class FirebaseService {
           .get();
 
       final documentSnapshot = querySnapshot.docs.first;
-      await documentSnapshot.reference.update({'isBlocked': channel.isBlocked});
-      print('Document updated successfully');
+      await documentSnapshot.reference.update({
+        'isBlocked': channel.isBlocked,
+        'isSubscribed': channel.isSubscribed
+      });
     } catch (e) {
       // Handle exception
-      print('Error updating document: $e');
+      throw 'Error updating document: $e';
     }
   }
 
@@ -132,10 +140,9 @@ class FirebaseService {
 
       final documentSnapshot = querySnapshot.docs.first;
       await documentSnapshot.reference.delete();
-      print('Document removed successfully');
     } catch (e) {
       // Handle exception
-      print('Error removing document: $e');
+      throw ('Error removing document: $e');
     }
   }
 }

@@ -24,6 +24,7 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
   late String statistics = '';
   late String banner = '';
   late String thumbnails = '';
+  late YoutubeChannel? yc;
 
   @override
   void initState() {
@@ -55,19 +56,118 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
               : '';
           thumbnails = item['snippet']['thumbnails']['default']['url'] ?? '';
           isLoading = false;
+          yc = _getYoutubeChannel();
         });
       } else {
         setState(() {
           title = 'Channel Info';
           isLoading = false;
+          yc = _getYoutubeChannel();
         });
       }
     } catch (e) {
       setState(() {
         title = 'Error';
         isLoading = false;
+        yc = _getYoutubeChannel();
       });
     }
+  }
+
+  YoutubeChannel? _getYoutubeChannel() {
+    final channelList = dataProvider.channelList;
+    try {
+      return channelList.firstWhere(
+        (channel) => channel.channelId == widget.channelId,
+      );
+    } catch (_) {
+      return YoutubeChannel(
+          channelId: widget.channelId,
+          title: title,
+          isSubscribed: false,
+          isBlocked: false);
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  Future<void> _performChannelAction(
+      YoutubeChannel channel, YtAction ytAction) async {
+    try {
+      bool success = await dataProvider.performChannelAction(channel, ytAction);
+      if (success) {
+        String actionMessage;
+        switch (ytAction) {
+          case YtAction.subscribe:
+            actionMessage = 'Successfully subscribed';
+            break;
+          case YtAction.unsubscribe:
+            actionMessage = 'Successfully unsubscribed';
+            break;
+          case YtAction.block:
+            actionMessage = 'Successfully blocked';
+            break;
+          case YtAction.unblock:
+            actionMessage = 'Successfully unblocked';
+            break;
+        }
+        _showSnackBar(actionMessage);
+      } else {
+        _showSnackBar('Action failed');
+      }
+    } catch (e) {
+      _showSnackBar('Action failed: $e');
+    }
+  }
+
+  Widget _buildSubscribeButton() {
+    return QMButton(
+      text: 'Subscribe',
+      onPressed: () async {
+        setState(() {
+          yc!.isBlocked = false;
+          yc!.isSubscribed = true;
+        });
+        await _performChannelAction(yc!, YtAction.subscribe);
+      },
+    );
+  }
+
+  Widget _buildUnsubscribeButton() {
+    return QMButton(
+      text: 'Unsubscribe',
+      onPressed: () async {
+        await _performChannelAction(yc!, YtAction.unsubscribe);
+      },
+    );
+  }
+
+  Widget _buildBlockButton() {
+    return QMButton(
+      text: 'Block',
+      onPressed: () async {
+        setState(() {
+          yc!.isBlocked = true;
+          yc!.isSubscribed = false;
+        });
+        await _performChannelAction(yc!, YtAction.block);
+      },
+    );
+  }
+
+  Widget _buildUnblockButton() {
+    return QMButton(
+      text: 'Unblock',
+      onPressed: () async {
+        await _performChannelAction(yc!, YtAction.unblock);
+      },
+    );
   }
 
   @override
@@ -76,20 +176,6 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
       // Show loading indicator or placeholder
       return const Center(child: CircularProgressIndicator());
     }
-
-    final channelList = dataProvider.channelList;
-    YoutubeChannel? yc;
-    try {
-      yc = channelList.firstWhere(
-        (channel) => channel.channelId == widget.channelId,
-      );
-    } catch (_) {
-      yc = null;
-    }
-
-    // final yc = channelList.firstWhere(
-    //   (channel) => channel.channelId == widget.channelId,orElse: () => null,
-    // );
 
     return Scaffold(
       appBar: AppBar(
@@ -171,106 +257,44 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: yc == null
-                  ? [
-                      QMButton(
-                        text: "Subscribe",
-                        leadingIcon: Icons.notifications_outlined,
-                        onPressed: () {
-                          // Subscribe to a new channel
-                          actionSubscribe();
-                        },
-                      ),
-                      QMButton(
-                        text: "Block",
-                        trailingIcon: Icons.block_outlined,
-                        onPressed: () {
-                          // Block a new channel
-                          actionBlock();
-                        },
-                      ),
-                    ]
-                  : [
-                      if (!yc.isBlocked) ...[
-                        QMButton(
-                            text: "Unsubscribe",
-                            leadingIcon: Icons.notifications_off_outlined,
-                            onPressed: () {
-                              // Add a new channel
-                              actionUnsubscribe();
-                            }),
-                        QMButton(
-                            text: "Block",
-                            leadingIcon: Icons.block_outlined,
-                            onPressed: () {
-                              // Block a channel
-                              actionBlock();
-                            }),
-                      ],
-                      if (yc.isBlocked) ...[
-                        QMButton(
-                          text: 'Subscribe',
-                          leadingIcon: Icons.notifications_outlined,
-                          onPressed: () {
-                            // Subscribe to a new channel
-                            actionSubscribe();
-                          },
-                        ),
-                        QMButton(
-                          text: 'Unblock',
-                          leadingIcon: Icons.priority_high_outlined,
-                          onPressed: () {
-                            // Unblock a channel
-                            actionUnblock();
-                          },
-                        )
-                      ],
-                    ],
+          if (yc!.isSubscribed == false && yc!.isBlocked == false)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildSubscribeButton(),
+                  _buildBlockButton(),
+                ],
+              ),
             ),
-          ),
+          if (yc!.isSubscribed == true && yc!.isBlocked == false)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildUnsubscribeButton(),
+                  _buildBlockButton(),
+                ],
+              ),
+            ),
+          if (yc!.isSubscribed == false && yc!.isBlocked == true)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildSubscribeButton(),
+                  _buildUnblockButton(),
+                ],
+              ),
+            ),
         ],
       ),
     );
-  }
-
-  void actionSubscribe() {
-    final newChannel = YoutubeChannel(
-      channelId: widget.channelId,
-      title: title,
-      isBlocked: false,
-    );
-    dataProvider.channelAction(newChannel, YtAction.subscribe);
-  }
-
-  void actionUnsubscribe() {
-    final newChannel = YoutubeChannel(
-      channelId: widget.channelId,
-      title: title,
-      isBlocked: false,
-    );
-    dataProvider.channelAction(newChannel, YtAction.unsubscribe);
-  }
-
-  void actionBlock() {
-    final newChannel = YoutubeChannel(
-      channelId: widget.channelId,
-      title: title,
-      isBlocked: true,
-    );
-    dataProvider.channelAction(newChannel, YtAction.block);
-  }
-
-  void actionUnblock() {
-    final newChannel = YoutubeChannel(
-      channelId: widget.channelId,
-      title: title,
-      isBlocked: false,
-    );
-    dataProvider.channelAction(newChannel, YtAction.unblock);
   }
 }
