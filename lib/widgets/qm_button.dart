@@ -4,7 +4,9 @@ class QMButton extends StatelessWidget {
   final String text;
   final IconData? leadingIcon;
   final IconData? trailingIcon;
-  final VoidCallback onPressed;
+  final bool isDisabled;
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
   final double width;
   final double height;
   final double iconSize;
@@ -27,7 +29,9 @@ class QMButton extends StatelessWidget {
   const QMButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.isDisabled = false,
+    this.onPressed,
+    this.onLongPress,
     this.leadingIcon,
     this.trailingIcon,
     this.width = 120,
@@ -53,7 +57,8 @@ class QMButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isDisabled ? null : onPressed,
+        onLongPress: isDisabled ? null : onLongPress,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
