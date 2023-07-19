@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:xml2json/xml2json.dart';
 
+import '../models/youtube_channel_video.dart';
+
 class YoutubeService {
   static const String apiKey = 'AIzaSyANE2nolzSZH0s41ekJS1sHBqflZBevSfY';
 
@@ -12,7 +14,7 @@ class YoutubeService {
       'maxResults': '20',
       'part': 'snippet',
       'q': query,
-      'type': 'channel',//video,channel,playlist
+      'type': 'channel', //video,channel,playlist
     });
 
     final response = await http.get(url);
@@ -66,7 +68,8 @@ class YoutubeService {
   static Future<List<dynamic>> getListChannels(String ids) async {
     final url = Uri.https('www.googleapis.com', '/youtube/v3/channels', {
       'key': apiKey,
-      'part': 'brandingSettings,id,localizations,snippet,statistics,contentDetails,contentOwnerDetails,status,topicDetails',
+      'part':
+          'brandingSettings,id,localizations,snippet,statistics,contentDetails,contentOwnerDetails,status,topicDetails',
       'id': ids
     });
 
@@ -79,5 +82,46 @@ class YoutubeService {
     } else {
       throw Exception('Failed to load videos');
     }
+  }
+
+  static Future<List<ChannelVideo>> getChannelVideos(String channelId) async {
+    List<ChannelVideo> allVideos = [];
+
+    final url = Uri.https('www.googleapis.com', '/youtube/v3/search', {
+      'key': apiKey,
+      'maxResults': '10',
+      'part': 'snippet',
+      'type': 'video',
+      'channelId': channelId,
+      'order': 'date',
+    });
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      for (var vid in data['items']) {
+        ChannelVideo video = ChannelVideo(
+          channelId: vid['snippet']['channelId'],
+          channelTitle: vid['snippet']['channelTitle'],
+          description: vid['snippet']['description'],
+          thumbnailDefaultUrl: vid['snippet']['thumbnails']['default']['url'],
+          thumbnailMediumUrl: vid['snippet']['thumbnails']['medium']['url'],
+          thumbnailHighUrl: vid['snippet']['thumbnails']['high']['url'],
+          title: vid['snippet']['title'],
+          videoId: vid['id']['videoId'],
+          publishedAt: DateTime.parse(vid['snippet']['publishedAt']),
+        );
+
+        allVideos.add(video);
+      }
+    } else {
+      throw Exception('Failed to load videos');
+    }
+
+    // sort the videos newest
+    allVideos.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
+    return allVideos;
   }
 }

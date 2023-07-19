@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_practice/services/youtube_service.dart';
 import 'package:flutter_practice/utils/constants.dart';
 import 'package:flutter_practice/utils/string_utils.dart';
+import 'package:flutter_practice/widgets/loading_indicators/wave_indicator.dart';
 import 'package:flutter_practice/widgets/qm_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/youtube_channel.dart';
 import '../../providers/data_provider.dart';
+import '../../utils/datetime_utils.dart';
 import '../test_screen.dart';
 
 class YoutubeChannelInfo extends StatefulWidget {
@@ -41,20 +43,20 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
       final fetchedData =
           await YoutubeService.getListChannels(widget.channelId);
       if (fetchedData.isNotEmpty) {
-        final item = fetchedData[0];
+        final data = fetchedData[0];
         setState(() {
-          title = item['snippet']['title'] ?? 'No Title';
-          statistics = item['snippet']['customUrl'] +
+          title = data['snippet']['title'] ?? 'No Title';
+          statistics = data['snippet']['customUrl'] +
               ' ∙ ' +
               StringUtils.formatNumberToShort(
-                  item['statistics']['subscriberCount']) +
+                  data['statistics']['subscriberCount']) +
               ' subscribers ∙ ' +
-              item['statistics']['videoCount'] +
+              data['statistics']['videoCount'] +
               ' videos';
-          banner = item['brandingSettings']['image'] != null
-              ? item['brandingSettings']['image']['bannerExternalUrl'] ?? ''
+          banner = data['brandingSettings']['image'] != null
+              ? data['brandingSettings']['image']['bannerExternalUrl'] ?? ''
               : '';
-          thumbnails = item['snippet']['thumbnails']['default']['url'] ?? '';
+          thumbnails = data['snippet']['thumbnails']['default']['url'] ?? '';
           isLoading = false;
           yc = _getYoutubeChannel();
         });
@@ -179,121 +181,208 @@ class _YoutubeChannelInfoState extends State<YoutubeChannelInfo> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color(0xffe53935),
         title: Text(
           title,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          banner.isEmpty
-              ? Image.asset(
-                  'assets/images/banner.jpg',
-                  width: MediaQuery.of(context).size.width,
-                  height: 70,
-                  fit: BoxFit.cover,
-                )
-              : Image.network(
-                  banner,
-                  width: MediaQuery.of(context).size.width,
-                  height: 70,
-                  fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            banner.isEmpty
+                ? Image.asset(
+                    'assets/images/banner.jpg',
+                    width: MediaQuery.of(context).size.width,
+                    height: 70,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    banner,
+                    width: MediaQuery.of(context).size.width,
+                    height: 70,
+                    fit: BoxFit.cover,
+                  ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 14),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 5,
+                height: MediaQuery.of(context).size.width / 5,
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
                 ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 14),
-            child: Container(
-              width: MediaQuery.of(context).size.width / 5,
-              height: MediaQuery.of(context).size.width / 5,
-              clipBehavior: Clip.antiAlias,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+                child: thumbnails.isEmpty
+                    ? Image.asset('assets/images/user.png')
+                    : Image.network(
+                        thumbnails,
+                        fit: BoxFit.cover,
+                      ),
               ),
-              child: thumbnails.isEmpty
-                  ? Image.asset('assets/images/user.png')
-                  : Image.network(
-                      thumbnails,
-                      fit: BoxFit.cover,
+            ),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 8),
+              child: Text(
+                statistics,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                // Navigate to the new screen when the Row is clicked
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const TestScreen(), // Replace 'NewScreen' with the desired screen to navigate to
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'More about this channel',
+                      style: TextStyle(fontSize: 12),
                     ),
-            ),
-          ),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 8),
-            child: Text(
-              statistics,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              // Navigate to the new screen when the Row is clicked
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const TestScreen(), // Replace 'NewScreen' with the desired screen to navigate to
+                    Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      size: 18,
+                    ),
+                  ],
                 ),
-              );
-            },
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: const Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'More about this channel',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios_outlined,
-                    size: 18,
-                  ),
-                ],
               ),
             ),
-          ),
-          if (yc!.isSubscribed == false && yc!.isBlocked == false)
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildSubscribeButton(),
-                  _buildBlockButton(),
-                ],
+            if (yc!.isSubscribed == false && yc!.isBlocked == false)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildSubscribeButton(),
+                    _buildBlockButton(),
+                  ],
+                ),
               ),
-            ),
-          if (yc!.isSubscribed == true && yc!.isBlocked == false)
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildUnsubscribeButton(),
-                  _buildBlockButton(),
-                ],
+            if (yc!.isSubscribed == true && yc!.isBlocked == false)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildUnsubscribeButton(),
+                    _buildBlockButton(),
+                  ],
+                ),
               ),
-            ),
-          if (yc!.isSubscribed == false && yc!.isBlocked == true)
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildSubscribeButton(),
-                  _buildUnblockButton(),
-                ],
+            if (yc!.isSubscribed == false && yc!.isBlocked == true)
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildSubscribeButton(),
+                    _buildUnblockButton(),
+                  ],
+                ),
               ),
+            FutureBuilder<List<dynamic>>(
+              future: YoutubeService.getChannelVideos(widget.channelId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: WaveIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  final items = snapshot.data!;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          child: SizedBox(
+                            width: 100,
+                            height: 80,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Image.network(
+                                    item['snippet']['thumbnails']['medium']
+                                        ['url'],
+                                    width: 125,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      8, 4, 0, 4),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item['snippet']['title'],
+                                        maxLines: 2,
+                                        softWrap: false,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        item['snippet']['channelTitle'],
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                      Text(
+                                        DateTimeUtils.timeFromNow(
+                                            item['snippet']['publishTime']),
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ],
+                                  ),
+                                ))
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(child: Text('No data available'));
+                }
+              },
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
