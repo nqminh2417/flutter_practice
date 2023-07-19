@@ -41,7 +41,7 @@ dependencies:
   cloud_firestore: ^4.8.1
   firebase_database: ^10.2.3
   change_app_package_name: ^1.1.0
-  moment_dart: ^0.17.5
+  moment_dart: ^0.18.1
   provider: ^6.0.5
   intl: ^0.18.1
   youtube_player_flutter: ^8.1.2
