@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_practice/screens/test_screen.dart';
 import 'package:flutter_practice/utils/color_utils.dart';
 import '../widgets/side_menu.dart';
+import 'bluetooth_screen.dart';
 import 'calendar_screen.dart';
 import 'clock_screen.dart';
 import 'summertime_saga_screen.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> screens = [
     {
-      'route': const ClockScreen(),
+      'route': const BluetoothScreen(),
       'title': 'bluetooth',
     },
     {
