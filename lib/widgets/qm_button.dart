@@ -5,7 +5,7 @@ class QMButton extends StatelessWidget {
   final IconData? leadingIcon;
   final IconData? trailingIcon;
   final bool isDisabled;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
   final VoidCallback? onLongPress;
   final double width;
   final double height;
@@ -30,7 +30,7 @@ class QMButton extends StatelessWidget {
     super.key,
     required this.text,
     this.isDisabled = false,
-    this.onPressed,
+    required this.onPressed,
     this.onLongPress,
     this.leadingIcon,
     this.trailingIcon,
