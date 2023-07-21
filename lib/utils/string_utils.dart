@@ -58,4 +58,15 @@ class StringUtils {
       return '${shortValue.toStringAsFixed(2)}${suffixes[exp - 1]}';
     }
   }
+
+  static String generateRandomString() {
+    const String chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final Random rnd = Random();
+    final String randomString = String.fromCharCodes(Iterable.generate(
+      20,
+      (_) => chars.codeUnitAt(rnd.nextInt(chars.length)),
+    ));
+    return randomString;
+  }
 }
