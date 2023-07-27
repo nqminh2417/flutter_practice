@@ -1,12 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_practice/widgets/qm_button.dart';
+// ignore_for_file: use_build_context_synchronously
 
-import '../widgets/loading_indicators/dot_fade.dart';
-import '../widgets/loading_indicators/dot_grow.dart';
-import '../widgets/loading_indicators/fading_circle.dart';
-import '../widgets/loading_indicators/three_bounce.dart';
-import '../widgets/loading_indicators/wave_indicator.dart';
-import '../widgets/loading_indicators/dot_bounce.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_practice/utils/string_utils.dart';
+import 'package:flutter_practice/widgets/qm_tag_box.dart';
+import 'package:flutter_practice/widgets/text_field/floating_label_text_field.dart';
+import 'package:flutter_practice/widgets/text_field/ifta_label_text_field.dart';
+import 'package:flutter_practice/widgets/qm_button.dart';
+import 'package:flutter_practice/widgets/qm_select_box.dart';
+import 'package:flutter_practice/widgets/text_field/stacked_label_text_field.dart';
+
+import '../database/entertainment_db.dart';
+import '../models/dynamic_option.dart';
+import '../services/sqlite_service.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({Key? key}) : super(key: key);
@@ -21,6 +26,76 @@ class _TestScreenState extends State<TestScreen> {
     super.initState();
   }
 
+  final List<DynamicOption> options = [
+    DynamicOption('Melody Marks', 'value1'),
+    DynamicOption('Angela White', 'value2'),
+    DynamicOption('Lauren Phillips', 'value3'),
+    DynamicOption('Lexi Luna', 'value4'),
+    // Add more options as needed
+  ];
+
+  List<String> fruits = ['Apple', 'Banana', 'Orange', 'Grapes', 'Mango'];
+
+  void printSelectedOptions() {
+    debugPrint('Selected Options:');
+    for (var option in selectedOptions) {
+      debugPrint('Label: ${option.label}, Value: ${option.value}');
+    }
+  }
+
+  List<DynamicOption> selectedOptions = [];
+
+  Future<bool> isDatabaseCreated() async {
+    final db = await SQLiteService().database;
+    return db.isOpen;
+  }
+
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _insertSampleVideos(BuildContext context) async {
+    final entertaimentDB = EntertainmentDB();
+    await entertaimentDB.insertSampleVideos();
+    _showSnackbar(context, 'Sample videos inserted successfully');
+  }
+
+  Future<void> _showAllVideos(BuildContext context) async {
+    final entertaimentDB = EntertainmentDB();
+    final List<Map<String, dynamic>> videos =
+        await entertaimentDB.getAllVideos();
+
+    // Display the videos in some way (e.g., in a dialog or another widget)
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('All Videos'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: videos.map((video) {
+                return ListTile(
+                  title: Text(video['title']),
+                  subtitle: Text('Type: ${video['type']}'),
+                  // Add more details if desired
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  final TextEditingController _resolutionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,40 +105,125 @@ class _TestScreenState extends State<TestScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Neonsign'),
         ),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               const SizedBox(
                 height: 24,
               ),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.amber),
-                  child: const DotBounce()),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.white70),
-                  child: const DotGrow()),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.white70),
-                  child: const DotFade()),
+              Wrap(
+                runSpacing: -8,
+                children: [
+                Chip(label: Text("Melody Marks")),
+                Chip(label: Text("Melody Marks")),
+                Chip(label: Text("Melody Marks")),
+                Chip(label: Text("Melody Marks")),
+                Chip(label: Text("Melody Marks")),
+              ],),
               const SizedBox(
-                height: 24,
+                height: 12,
               ),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.white70),
-                  child: const ThreeBounce()),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.white70),
-                  child: const WaveIndicator()),
-              Container(
-                  height: 60,
-                  decoration: const BoxDecoration(color: Colors.white70),
-                  child: const FadingCircle()),
+              QMTagBox(label: "Enterprise", tags: fruits, suggestions: fruits),
+              const SizedBox(
+                height: 12,
+              ),
+              FloatingLabelTextField(
+                  label: "Actor", controller: _resolutionController),
+              const SizedBox(
+                height: 12,
+              ),
+              IFTALabelTextField(
+                  label: "Title*", controller: _resolutionController),
+              const SizedBox(
+                height: 12,
+              ),
+              StackedLabelTextField(
+                  labelText: "Hello*", controller: _resolutionController),
+              ElevatedButton(
+                onPressed: () async {
+                  final isCreated = await isDatabaseCreated();
+                  if (isCreated) {
+                    await _showAllVideos(context);
+                  } else {
+                    _showSnackbar(context, 'Database does not exist');
+                  }
+                },
+                child: const Text('Get All Videos'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final isCreated = await isDatabaseCreated();
+                  if (isCreated) {
+                    await _insertSampleVideos(context);
+                  } else {
+                    _showSnackbar(context, 'Database does not exist');
+                  }
+                },
+                child: const Text('Insert Sample Videos'),
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              Chip(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      8.0), // Set the desired border radius
+                ),
+                label: Text("Awdwad"),
+                deleteIcon: Icon(Icons.clear),
+                onDeleted: () {},
+              ),
+              QMSelectBox(
+                options: options,
+                hintText: 'Search for an option...',
+                onSelectedOptionsChanged: (List<DynamicOption> options) {
+                  setState(() {
+                    selectedOptions = options;
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Call the function to print the selected options
+                  printSelectedOptions();
+                },
+                child: const Text('Get Selected Options'),
+              ),
+              Chip(
+                label: Text(StringUtils.generateRandomString()),
+                onDeleted: () {},
+              ),
+              Text(StringUtils.generateRandomString()),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.amber),
+              //     child: const DotBounce()),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.white70),
+              //     child: const DotGrow()),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.white70),
+              //     child: const DotFade()),
+              // const SizedBox(
+              //   height: 24,
+              // ),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.white70),
+              //     child: const ThreeBounce()),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.white70),
+              //     child: const WaveIndicator()),
+              // Container(
+              //     height: 60,
+              //     decoration: const BoxDecoration(color: Colors.white70),
+              //     child: const FadingCircle()),
               SizedBox(
                 // width: 200,
                 height: 56,

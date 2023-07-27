@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_practice/screens/sqlite_manager_screen.dart';
 import 'package:flutter_practice/screens/test_screen.dart';
 import 'package:flutter_practice/utils/color_utils.dart';
 import '../widgets/side_menu.dart';
@@ -36,6 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'route': const CalendarScreen(),
       'title': 'Calendar Screen',
+    },
+    {
+      'route': const SQLiteManagerScreen(),
+      'title': 'SQLite Manager',
     },
     {
       'route': const TestScreen(),
