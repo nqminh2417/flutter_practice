@@ -133,9 +133,22 @@ class _TestScreenState extends State<TestScreen> {
                 height: 12,
               ),
               QMTagBox(
-                  label: "Enterprise",
-                  options: options,
-                  onSelectedOptionsChanged: (List<DynamicOption> options) {}),
+                label: "Enterprise",
+                options: options,
+                onSelectedOptionsChanged: (List<DynamicOption> options) {
+                  setState(() {
+                    selectedOptions = options;
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Call the function to print the selected options
+                  printSelectedOptions();
+                },
+                child: const Text('Get Selected Options'),
+              ),
               //     Container(
               //   height: 150,
               //   decoration: BoxDecoration(
@@ -192,23 +205,16 @@ class _TestScreenState extends State<TestScreen> {
                 deleteIcon: Icon(Icons.clear),
                 onDeleted: () {},
               ),
-              QMSelectBox(
-                options: options,
-                hintText: 'Search for an option...',
-                onSelectedOptionsChanged: (List<DynamicOption> options) {
-                  setState(() {
-                    selectedOptions = options;
-                  });
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Call the function to print the selected options
-                  printSelectedOptions();
-                },
-                child: const Text('Get Selected Options'),
-              ),
+              // QMSelectBox(
+              //   options: options,
+              //   hintText: 'Search for an option...',
+              //   onSelectedOptionsChanged: (List<DynamicOption> options) {
+              //     setState(() {
+              //       selectedOptions = options;
+              //     });
+              //   },
+              // ),
+
               Chip(
                 label: Text(StringUtils.generateRandomString()),
                 onDeleted: () {},

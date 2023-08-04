@@ -4,8 +4,10 @@ import '../models/dynamic_option.dart';
 
 class QMModalTagSearch extends StatefulWidget {
   final List<DynamicOption> options;
+  final List<DynamicOption> selectedOptions;
 
-  const QMModalTagSearch({super.key, required this.options});
+  const QMModalTagSearch(
+      {super.key, required this.options, required this.selectedOptions});
 
   @override
   State<QMModalTagSearch> createState() => _QMModalTagSearchState();
@@ -14,12 +16,13 @@ class QMModalTagSearch extends StatefulWidget {
 class _QMModalTagSearchState extends State<QMModalTagSearch> {
   final TextEditingController _searchController = TextEditingController();
   List<DynamicOption> filteredOptions = [];
-  List<DynamicOption> selectedOptions = [];
 
   @override
   void initState() {
     super.initState();
     filteredOptions = widget.options;
+    _searchController.text = '';
+    _onSearchChanged('');
   }
 
   void _onSearchChanged(String query) {
@@ -27,12 +30,6 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
       filteredOptions = widget.options.where((option) {
         return option.label.toLowerCase().contains(query.toLowerCase());
       }).toList();
-    });
-  }
-
-  void _handleDeleteTag(DynamicOption deletedOption) {
-    setState(() {
-      selectedOptions.remove(deletedOption);
     });
   }
 
@@ -45,8 +42,10 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
   @override
   Widget build(BuildContext context) {
     // Separating selected and unselected options
-    final selectedSet = selectedOptions.toSet();
-    final unselectedOptions = filteredOptions.where((option) => !selectedSet.contains(option)).toList();
+    final selectedSet = widget.selectedOptions.toSet();
+    final unselectedOptions = filteredOptions
+        .where((option) => !selectedSet.contains(option))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +54,7 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
             Icons.close,
           ),
           onPressed: () {
-            Navigator.pop(context, selectedOptions);
+            Navigator.pop(context, widget.selectedOptions);
           },
         ),
         title: const Text('Screen A'),
@@ -66,7 +65,7 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () {
-              Navigator.pop(context, selectedOptions);
+              Navigator.pop(context, widget.selectedOptions);
             },
           ),
           TextButton(
@@ -76,7 +75,7 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
             ),
             onPressed: () {
               setState(() {
-                selectedOptions = [];
+                widget.selectedOptions.clear();
               });
             },
           ),
@@ -112,12 +111,13 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
           Expanded(
             child: ListView.separated(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: selectedOptions.length + unselectedOptions.length,
+              itemCount:
+                  widget.selectedOptions.length + unselectedOptions.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                if (index < selectedOptions.length) {
+                if (index < widget.selectedOptions.length) {
                   // Display selected options
-                  final option = selectedOptions[index];
+                  final option = widget.selectedOptions[index];
                   return Center(
                     child: ListTile(
                       dense: true,
@@ -126,14 +126,15 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
                       leading: const Icon(Icons.check_box, color: Colors.green),
                       onTap: () {
                         setState(() {
-                          selectedOptions.remove(option);
+                          widget.selectedOptions.remove(option);
                         });
                       },
                     ),
                   );
                 } else {
                   // Display unselected options
-                  final option = unselectedOptions[index - selectedOptions.length];
+                  final option =
+                      unselectedOptions[index - widget.selectedOptions.length];
                   return Center(
                     child: ListTile(
                       dense: true,
@@ -142,7 +143,7 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
                       leading: const Icon(Icons.check_box_outline_blank),
                       onTap: () {
                         setState(() {
-                          selectedOptions.add(option);
+                          widget.selectedOptions.add(option);
                         });
                       },
                     ),
@@ -156,32 +157,3 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
     );
   }
 }
-
-// Expanded(
-//             child: ListView.builder(
-//               physics: const AlwaysScrollableScrollPhysics(),
-//               shrinkWrap: true,
-//               itemCount: filteredOptions.length,
-//               itemBuilder: (context, index) {
-//                 final option = filteredOptions[index];
-//                 final isSelected = selectedOptions.contains(option);
-//                 return ListTile(
-//                   dense: true,
-//                   visualDensity: const VisualDensity(vertical: -3),
-//                   title: Text(option.label),
-//                   leading: isSelected
-//                       ? const Icon(Icons.check_box, color: Colors.green)
-//                       : const Icon(Icons.check_box_outline_blank),
-//                   onTap: () {
-//                     setState(() {
-//                       if (isSelected) {
-//                         selectedOptions.remove(option);
-//                       } else {
-//                         selectedOptions.add(option);
-//                       }
-//                     });
-//                   },
-//                 );
-//               },
-//             ),
-//           ),
