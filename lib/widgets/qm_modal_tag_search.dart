@@ -21,8 +21,6 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
   void initState() {
     super.initState();
     filteredOptions = widget.options;
-    _searchController.text = '';
-    _onSearchChanged('');
   }
 
   void _onSearchChanged(String query) {

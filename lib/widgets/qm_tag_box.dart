@@ -43,8 +43,8 @@ class _QMTagBoxState extends State<QMTagBox> {
       setState(() {
         _selectedOptions = selected;
       });
+      widget.onSelectedOptionsChanged(_selectedOptions);
     }
-    widget.onSelectedOptionsChanged(_selectedOptions);
   }
 
   @override
@@ -60,12 +60,12 @@ class _QMTagBoxState extends State<QMTagBox> {
               widget.label,
               style: const TextStyle(
                 color: Colors.grey,
-                // fontSize: 12.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
             TextButton(
-                onPressed: openTagSearch, child: const Text("Open Tag Search"))
+                onPressed: openTagSearch,
+                child: const Text("Open Tag Search"))
           ],
         ),
         Wrap(

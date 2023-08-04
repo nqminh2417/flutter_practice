@@ -6,7 +6,6 @@ import 'package:flutter_practice/widgets/qm_tag_box.dart';
 import 'package:flutter_practice/widgets/text_field/floating_label_text_field.dart';
 import 'package:flutter_practice/widgets/text_field/ifta_label_text_field.dart';
 import 'package:flutter_practice/widgets/qm_button.dart';
-import 'package:flutter_practice/widgets/qm_select_box.dart';
 import 'package:flutter_practice/widgets/text_field/stacked_label_text_field.dart';
 
 import '../database/entertainment_db.dart';
