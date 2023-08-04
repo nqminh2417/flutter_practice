@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     },
     // Add more screens here...
   ];
+
   @override
   void initState() {
     super.initState();
@@ -64,38 +65,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         drawer: const SideMenu(),
-        body: GridView.count(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          padding: const EdgeInsets.all(20),
-          primary: false,
-          children: List.generate(screens.length, (index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => screens[index]['route'],
-                  ),
-                );
-              },
-              child: GridTile(
-                child: Card(
-                  color: ColorUtils.getRandomColor(),
-                  child: Center(
-                    child: Text(
-                      screens[index]['title'],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+        body: ListView.builder(
+          itemCount: screens.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text(
+                  screens[index]['title'],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                tileColor: ColorUtils.getRandomColor(),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => screens[index]['route'],
+                    ),
+                  );
+                },
               ),
             );
-          }),
+          },
         ),
       ),
       onWillPop: () async {

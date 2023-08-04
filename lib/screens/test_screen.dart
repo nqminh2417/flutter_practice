@@ -27,10 +27,26 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   final List<DynamicOption> options = [
-    DynamicOption('Melody Marks', 'value1'),
-    DynamicOption('Angela White', 'value2'),
-    DynamicOption('Lauren Phillips', 'value3'),
-    DynamicOption('Lexi Luna', 'value4'),
+    DynamicOption('Johnny Depp', 'value1'),
+    DynamicOption('Robert Downey Jr', 'value2'),
+    DynamicOption('Tom Cruise', 'value3'),
+    DynamicOption('Angelina Jolie', 'value4'),
+    DynamicOption('Joaquin Phoenix', 'value5'),
+    DynamicOption('Cate Blanchett', 'value6'),
+    DynamicOption('Natalie Portman', 'value7'),
+    DynamicOption('Ryan Reynolds', 'value8'),
+    DynamicOption('Anne Hathaway', 'value9'),
+    DynamicOption('Jennifer Lawrence', 'value10'),
+    DynamicOption('Morgan Freeman', 'value11'),
+    DynamicOption('Emma Stone', 'value12'),
+    DynamicOption('Christian Bale', 'value13'),
+    DynamicOption('Samuel L. Jackson', 'value14'),
+    DynamicOption('Hugh Jackman', 'value15'),
+    DynamicOption('Chris Evans', 'value16'),
+    DynamicOption('Scarlett Johansson', 'value17'),
+    DynamicOption('Nicole Kidman', 'value18'),
+    DynamicOption('Benedict Cumberbatch', 'value19'),
+    DynamicOption('Dwayne "The Rock" Johnson', 'value20'),
     // Add more options as needed
   ];
 
@@ -113,19 +129,20 @@ class _TestScreenState extends State<TestScreen> {
               const SizedBox(
                 height: 24,
               ),
-              Wrap(
-                runSpacing: -8,
-                children: [
-                Chip(label: Text("Melody Marks")),
-                Chip(label: Text("Melody Marks")),
-                Chip(label: Text("Melody Marks")),
-                Chip(label: Text("Melody Marks")),
-                Chip(label: Text("Melody Marks")),
-              ],),
               const SizedBox(
                 height: 12,
               ),
-              QMTagBox(label: "Enterprise", tags: fruits, suggestions: fruits),
+              QMTagBox(
+                  label: "Enterprise",
+                  options: options,
+                  onSelectedOptionsChanged: (List<DynamicOption> options) {}),
+              //     Container(
+              //   height: 150,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(4.0),
+              //     border: Border.all(color: Colors.grey),
+              //   ),
+              // ),
               const SizedBox(
                 height: 12,
               ),
