@@ -107,47 +107,56 @@ class _QMModalTagSearchState extends State<QMModalTagSearch> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount:
-                  widget.selectedOptions.length + unselectedOptions.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                if (index < widget.selectedOptions.length) {
-                  // Display selected options
-                  final option = widget.selectedOptions[index];
-                  return Center(
-                    child: ListTile(
-                      dense: true,
-                      visualDensity: const VisualDensity(vertical: -3),
-                      title: Text(option.label),
-                      leading: const Icon(Icons.check_box, color: Colors.green),
-                      onTap: () {
-                        setState(() {
-                          widget.selectedOptions.remove(option);
-                        });
-                      },
-                    ),
-                  );
-                } else {
-                  // Display unselected options
-                  final option =
-                      unselectedOptions[index - widget.selectedOptions.length];
-                  return Center(
-                    child: ListTile(
-                      dense: true,
-                      visualDensity: const VisualDensity(vertical: -3),
-                      title: Text(option.label),
-                      leading: const Icon(Icons.check_box_outline_blank),
-                      onTap: () {
-                        setState(() {
-                          widget.selectedOptions.add(option);
-                        });
-                      },
-                    ),
-                  );
-                }
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount:
+                    widget.selectedOptions.length + unselectedOptions.length,
+                // separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, index) {
+                  if (index < widget.selectedOptions.length) {
+                    // Display selected options
+                    final option = widget.selectedOptions[index];
+                    return Center(
+                      child: ListTile(
+                        dense: true,
+                        visualDensity: const VisualDensity(vertical: -2),
+                        title: Text(
+                          option.label,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        leading: const Icon(Icons.check_box, color: Colors.green),
+                        onTap: () {
+                          setState(() {
+                            widget.selectedOptions.remove(option);
+                          });
+                        },
+                      ),
+                    );
+                  } else {
+                    // Display unselected options
+                    final option =
+                        unselectedOptions[index - widget.selectedOptions.length];
+                    return Center(
+                      child: ListTile(
+                        dense: true,
+                        visualDensity: const VisualDensity(vertical: -2),
+                        title: Text(
+                          option.label,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        leading: const Icon(Icons.check_box_outline_blank),
+                        onTap: () {
+                          setState(() {
+                            widget.selectedOptions.add(option);
+                          });
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],
