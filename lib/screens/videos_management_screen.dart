@@ -24,8 +24,8 @@ class _VidMgmtScreenState extends State<VidMgmtScreen> {
   }
 
   Future<void> _fetchVideos() async {
-    final pographyDB = EntertainmentDB();
-    final fetchedVideos = await pographyDB.getAllVideos();
+    final entertainmentDB = EntertainmentDB();
+    final fetchedVideos = await entertainmentDB.getAllVideos();
     setState(() {
       allVideos = fetchedVideos;
       filteredVideos = allVideos; // Initialize filteredVideos with all videos
@@ -76,13 +76,24 @@ class _VidMgmtScreenState extends State<VidMgmtScreen> {
                   autofocus: true,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    constraints:
+                        const BoxConstraints(minWidth: 36, maxHeight: 36),
                     hintText: 'Search Videos',
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIconConstraints:
+                        const BoxConstraints(minWidth: 36, maxHeight: 36),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      size: 24,
+                    ),
+                    suffixIconConstraints:
+                        const BoxConstraints(minWidth: 36, maxHeight: 36),
                     suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            onPressed: _clearSearch,
-                            icon: const Icon(Icons.cancel),
-                            highlightColor: Colors.transparent,
+                        ? InkWell(
+                            onTap: _clearSearch,
+                            child: const Icon(
+                              Icons.cancel,
+                              size: 24,
+                            ),
                           )
                         : null,
                     // hintStyle: const TextStyle(color: Colors.white),
@@ -137,9 +148,23 @@ class _VidMgmtScreenState extends State<VidMgmtScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const VideoEditScreen()),
+                    builder: (context) => VideoEditScreen(
+                          videoId: video['id'].toString(),
+                        )),
               );
             },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const VideoEditScreen(
+                      videoId: '0',
+                    )),
           );
         },
       ),

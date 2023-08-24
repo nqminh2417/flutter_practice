@@ -13,6 +13,20 @@ class EntertainmentDB {
     return await db.query('Videos');
   }
 
+  Future<Map<String, dynamic>?> getVideoById(String videoId) async {
+    final db = await _sqLiteService.database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'Videos',
+      where: 'id = ?',
+      whereArgs: [videoId],
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null; // Video with the specified ID not found
+    }
+  }
+
   Future<void> updateVideo(int id, Map<String, dynamic> videoData) async {
     final db = await _sqLiteService.database;
     await db.update('Videos', videoData, where: 'id = ?', whereArgs: [id]);
@@ -33,6 +47,7 @@ class EntertainmentDB {
         await txn.insert(
           'Videos',
           {
+            'id': '$i',
             'title': 'Sample Video $i',
             'releaseDate': '2023-07-20',
             'isVR': 0,

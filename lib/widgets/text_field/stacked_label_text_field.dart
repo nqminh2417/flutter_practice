@@ -6,6 +6,7 @@ class StackedLabelTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
   final Function(String)? onChanged;
+  final bool readOnly;
 
   const StackedLabelTextField({
     super.key,
@@ -14,6 +15,7 @@ class StackedLabelTextField extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.onChanged,
+    this.readOnly = false,
   });
 
   @override
@@ -21,6 +23,9 @@ class StackedLabelTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const SizedBox(
+          height: 16,
+        ),
         Text(
           labelText,
           style: const TextStyle(
@@ -40,12 +45,14 @@ class StackedLabelTextField extends StatelessWidget {
               onChanged: onChanged,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.blue),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              readOnly: readOnly,
             ),
           ),
         ),
